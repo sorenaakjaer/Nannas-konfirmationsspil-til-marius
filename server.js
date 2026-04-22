@@ -18,7 +18,7 @@ const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const UPLOAD_DIR = path.join(PUBLIC_DIR, 'uploads');
 const QUESTIONS_FILE = path.join(DATA_DIR, 'questions.json');
 const STATE_FILE = path.join(DATA_DIR, 'state.json');
-const ROOT_QUESTIONS_MD = path.resolve(ROOT_DIR, '..', 'Questions.md');
+const ROOT_QUESTIONS_MD = path.join(ROOT_DIR, 'Questions.md');
 
 for (const dir of [DATA_DIR, PUBLIC_DIR, UPLOAD_DIR]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
