@@ -1,0 +1,166 @@
+{
+  "title": "Nanna STORE Quiz til Marius",
+  "defaultTimeLimitSeconds": 20,
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "Marius er bedre end Nanna til at lave mad.",
+      "type": "single",
+      "timeLimitSeconds": 15,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "Han laver i hvert fald god stemning i køkkenet.",
+      "enabled": true,
+      "options": [
+        {
+          "id": "q1o1",
+          "text": "Sandt",
+          "isCorrect": true,
+          "color": "#ff4fa1",
+          "shape": "triangle"
+        },
+        {
+          "id": "q1o2",
+          "text": "Falsk",
+          "isCorrect": false,
+          "color": "#4666ff",
+          "shape": "diamond"
+        },
+        {
+          "id": "q1o3",
+          "text": "Kommer an på retten",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle"
+        },
+        {
+          "id": "q1o4",
+          "text": "Ingen af dem",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square"
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "Hvilken dato og årstal er Marius født?",
+      "type": "single",
+      "timeLimitSeconds": 18,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "",
+      "enabled": true,
+      "options": [
+        {
+          "id": "q2o1",
+          "text": "17. august 2015",
+          "isCorrect": false,
+          "color": "#ff4fa1",
+          "shape": "triangle"
+        },
+        {
+          "id": "q2o2",
+          "text": "20. august 2019",
+          "isCorrect": false,
+          "color": "#4666ff",
+          "shape": "diamond"
+        },
+        {
+          "id": "q2o3",
+          "text": "18. august 2012",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle"
+        },
+        {
+          "id": "q2o4",
+          "text": "17. august 2012",
+          "isCorrect": true,
+          "color": "#13a06f",
+          "shape": "square"
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "Hvad kan Marius bedst lide?",
+      "type": "multi",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "Her var der flere rigtige svar.",
+      "enabled": true,
+      "options": [
+        {
+          "id": "q3o1",
+          "text": "Sushi",
+          "isCorrect": true,
+          "color": "#ff4fa1",
+          "shape": "triangle"
+        },
+        {
+          "id": "q3o2",
+          "text": "Laks",
+          "isCorrect": true,
+          "color": "#4666ff",
+          "shape": "diamond"
+        },
+        {
+          "id": "q3o3",
+          "text": "Pizza",
+          "isCorrect": true,
+          "color": "#ffad33",
+          "shape": "circle"
+        },
+        {
+          "id": "q3o4",
+          "text": "Svampe",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square"
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "prompt": "Hvilken app bruger Marius mest?",
+      "type": "single",
+      "timeLimitSeconds": 15,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "",
+      "enabled": true,
+      "options": [
+        {
+          "id": "q4o1",
+          "text": "TikTok",
+          "isCorrect": false,
+          "color": "#ff4fa1",
+          "shape": "triangle"
+        },
+        {
+          "id": "q4o2",
+          "text": "YouTube",
+          "isCorrect": true,
+          "color": "#4666ff",
+          "shape": "diamond"
+        },
+        {
+          "id": "q4o3",
+          "text": "Instagram",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle"
+        },
+        {
+          "id": "q4o4",
+          "text": "Snapchat",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square"
+        }
+      ]
+    }
+  ]
+}

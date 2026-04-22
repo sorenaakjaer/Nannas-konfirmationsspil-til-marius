@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Nanna STORE Quiz til Marius - Spiller</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="play-body">
+  <main class="container">
+    <section class="card">
+      <h1>Spil med</h1>
+      <div class="row">
+        <input id="nameInput" type="text" placeholder="Dit navn" maxlength="24" />
+        <input id="avatarInput" type="text" value="🎉" maxlength="4" />
+      </div>
+      <button id="saveIdentityBtn" class="btn secondary">Gem navn</button>
+    </section>
+
+    <section class="card">
+      <p id="phaseText">Venter på host...</p>
+      <h2 id="questionPrompt">-</h2>
+      <img id="questionImage" class="question-image hidden" alt="Spørgsmålsbillede" />
+      <div id="optionGrid" class="option-grid"></div>
+      <div class="row">
+        <button id="submitBtn" class="btn">Svar nu</button>
+      </div>
+      <p id="feedback" class="muted"></p>
+    </section>
+
+    <section class="card">
+      <h3>Leaderboard</h3>
+      <div id="leaderboard"></div>
+    </section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/play.js"></script>
+</body>
+</html>

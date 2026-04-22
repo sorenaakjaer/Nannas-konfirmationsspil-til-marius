@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Nanna STORE Quiz til Marius - Marius</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="marius-body">
+  <main class="container">
+    <section id="loginCard" class="card">
+      <h1>Marius panel</h1>
+      <input id="mariusPin" type="password" placeholder="Marius PIN" />
+      <button id="loginBtn" class="btn">Log ind</button>
+    </section>
+
+    <section id="panel" class="hidden">
+      <div class="card">
+        <p id="phaseText">Venter...</p>
+        <h2 id="questionPrompt">-</h2>
+        <img id="questionImage" class="question-image hidden" alt="Spørgsmålsbillede" />
+        <div id="optionGrid" class="option-grid"></div>
+        <button id="submitBtn" class="btn">Lås mit svar</button>
+        <p id="feedback" class="muted"></p>
+      </div>
+    </section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/marius.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nanna STORE Quiz til Marius - Screen</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="screen-body">
+  <main class="screen-layout">
+    <header class="screen-header">
+      <div>
+        <h1 id="title">Nanna STORE Quiz til Marius</h1>
+        <p id="subTitle">Konfirmationsquiz</p>
+      </div>
+      <div class="countdown-pill" id="countdownPill">--</div>
+    </header>
+
+    <section id="stage" class="card stage"></section>
+
+    <section class="card">
+      <h2>Top 3</h2>
+      <div id="top3" class="top-grid"></div>
+      <h3>I jagten</h3>
+      <div id="hunt" class="hunt-list"></div>
+    </section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/screen.js"></script>
+</body>
+</html>
