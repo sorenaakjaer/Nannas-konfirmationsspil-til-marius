@@ -5,7 +5,7 @@ Kahoot-inspireret konfirmationsquiz med fire views:
 - `/screen` - storskærm
 - `/host` - host-kontrolpanel
 - `/play` - gæster på mobil
-- `/marius` - Marius' parallelle svarskærm
+- `/konfirmant` - konfirmandens parallelle svarskærm
 
 ## Start
 

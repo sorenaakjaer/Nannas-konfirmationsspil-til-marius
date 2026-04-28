@@ -7,22 +7,41 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="screen-body">
-  <main class="screen-layout">
-    <header class="screen-header">
-      <div>
-        <h1 id="title">Nanna STORE Quiz til Marius</h1>
-        <p id="subTitle">Konfirmationsquiz</p>
+  <div class="show-lights" aria-hidden="true">
+    <span class="light light-left"></span>
+    <span class="light light-center"></span>
+    <span class="light light-right"></span>
+  </div>
+  <div class="site-brand-banner">
+    <div class="site-brand-shell">
+      <div class="site-brand-text">
+        <span id="brandHostText" class="brand-nanna">Nannas</span>
+        <span class="brand-store">STORE</span>
+        <span class="brand-rest">quiz til</span>
+        <span id="brandCelebrantText" class="brand-marius">Marius</span>
       </div>
-      <div class="countdown-pill" id="countdownPill">--</div>
-    </header>
+      <div class="site-breaking">
+        <span class="breaking-dot"></span>
+        <span id="liveLineText" class="breaking-label">Live fra konfirmationen den 2. maj i Den Japanske Have</span>
+      </div>
+    </div>
+  </div>
+  <main class="screen-layout">
+    <section class="screen-main-grid">
+      <section id="stage" class="card stage stage-card"></section>
 
-    <section id="stage" class="card stage"></section>
-
-    <section class="card">
-      <h2>Top 3</h2>
-      <div id="top3" class="top-grid"></div>
-      <h3>I jagten</h3>
-      <div id="hunt" class="hunt-list"></div>
+      <aside class="sidebar-stack">
+        <section class="card side-panel sidebar-podium-panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Live podium</div>
+              <h2>Top 3</h2>
+            </div>
+          </div>
+          <div id="top3" class="sidebar-podium"></div>
+          <div id="sidebarRecap" class="sidebar-recap"></div>
+        </section>
+      </aside>
     </section>
   </main>
   <script src="/socket.io/socket.io.js"></script>

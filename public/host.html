@@ -7,81 +7,188 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="host-body">
+  <div class="site-brand-banner">
+    <div class="site-brand-shell">
+      <div class="site-brand-text">
+        <span id="brandHostText" class="brand-nanna">Nannas</span>
+        <span class="brand-store">STORE</span>
+        <span class="brand-rest">quiz til</span>
+        <span id="brandCelebrantText" class="brand-marius">Marius</span>
+      </div>
+      <div class="site-breaking">
+        <span class="breaking-dot"></span>
+        <span id="liveLineText" class="breaking-label">Live fra konfirmationen den 2. maj i Den Japanske Have</span>
+      </div>
+    </div>
+  </div>
   <main class="container host-grid">
-    <section class="panel card" id="loginCard">
-      <h1>Nanna STORE Quiz til Marius</h1>
-      <p class="muted">Host login</p>
+    <section class="panel card login-card" id="loginCard">
+      <div class="eyebrow">Show Control</div>
+      <h1 id="hostLoginTitle">Log ind som host</h1>
+      <p class="muted">Styr flow, spørgsmål, branding og billeder herfra.</p>
       <label for="hostPin">Host PIN</label>
       <input id="hostPin" type="password" placeholder="1234" />
       <button id="loginBtn" class="btn">Log ind</button>
     </section>
 
     <section id="hostPanel" class="hidden host-content">
-      <div class="card">
-        <h2>Status</h2>
+      <div class="host-top-grid">
+        <div class="card status-card">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Overblik</div>
+              <h2>Status</h2>
+            </div>
+          </div>
         <div class="kv">
           <span>Fase</span><strong id="phaseLabel">-</strong>
           <span>Spørgsmål</span><strong id="questionLabel">-</strong>
           <span>Svar inde</span><strong id="answersCount">0</strong>
-          <span>Marius</span><strong id="mariusStatus">Mangler svar</strong>
+          <span id="celebrantStatusLabel">Marius</span><strong id="mariusStatus">Mangler svar</strong>
           <span>Deltagere klar</span><strong id="connectedGuests">0</strong>
         </div>
-        <div class="row">
-          <label for="questionCount">Hvor mange spørgsmål skal bruges?</label>
-          <input id="questionCount" type="number" min="1" max="50" />
-          <button id="setQuestionCountBtn" class="btn secondary">Gem antal</button>
         </div>
-        <div class="btn-wrap">
-          <button id="startBtn" class="btn">Start spil</button>
-          <button id="lockBtn" class="btn secondary">Lås spørgsmål</button>
-          <button id="revealBtn" class="btn secondary">Afslør svar</button>
-          <button id="scoreboardBtn" class="btn secondary">Vis Top 3</button>
-          <button id="nextBtn" class="btn">Næste spørgsmål</button>
-          <button id="finishBtn" class="btn">Finale nu</button>
-          <button id="resetBtn" class="btn danger">Nulstil</button>
+        <div class="card shortcuts-card">
+          <div class="eyebrow">Flow</div>
+          <div class="btn-wrap control-grid">
+            <button id="showIntroBtn" class="btn secondary">Vis intro</button>
+            <button id="showQrBtn" class="btn secondary">Vis QR kode</button>
+            <button id="startBtn" class="btn">Start spil</button>
+            <button id="nextBtn" class="btn">Næste spørgsmål</button>
+            <button id="restartCurrentBtn" class="btn secondary">Start spørgsmål forfra</button>
+            <button id="addTimeBtn" class="btn secondary">Giv 10 sek mere</button>
+            <button id="finishBtn" class="btn">Finale nu</button>
+            <button id="resetBtn" class="btn danger">Nulstil</button>
+          </div>
         </div>
       </div>
 
       <div class="card">
-        <h2>Rediger spørgsmål</h2>
+        <div class="eyebrow">Branding</div>
+        <h2>Navne, titel og baggrund</h2>
         <div class="row">
-          <select id="questionSelect"></select>
-          <button id="newQuestionBtn" class="btn secondary">Nyt</button>
-          <button id="deleteQuestionBtn" class="btn danger">Slet</button>
-        </div>
-        <label for="qPrompt">Spørgsmål</label>
-        <textarea id="qPrompt" rows="3"></textarea>
-        <div class="row">
-          <label><input type="radio" name="qType" value="single" checked /> Single choice</label>
-          <label><input type="radio" name="qType" value="multi" /> Multi choice</label>
-          <label>Tid (sek) <input id="qTime" type="number" min="5" max="90" /></label>
-          <label><input id="qEnabled" type="checkbox" checked /> Aktiv</label>
-        </div>
-        <div id="optionsWrap"></div>
-        <label for="qRevealText">Reveal tekst</label>
-        <textarea id="qRevealText" rows="2"></textarea>
-
-        <div class="row upload-row">
-          <div>
-            <label>Spørgsmålsbillede URL</label>
-            <input id="qQuestionImageUrl" type="text" placeholder="/uploads/..." />
+          <div style="flex:1 1 220px;">
+            <label for="configHostName">Nanna-navn</label>
+            <input id="configHostName" type="text" placeholder="Nanna" />
           </div>
-          <div>
-            <label>Reveal billede URL</label>
-            <input id="qRevealImageUrl" type="text" placeholder="/uploads/..." />
+          <div style="flex:1 1 220px;">
+            <label for="configCelebrantName">Konfirmand-navn</label>
+            <input id="configCelebrantName" type="text" placeholder="Marius" />
           </div>
         </div>
-        <div class="row">
-          <label>Upload billede <input id="imageUpload" type="file" accept="image/*" /></label>
-          <button id="saveQuestionBtn" class="btn">Gem spørgsmål</button>
-          <button id="importMdBtn" class="btn secondary">Importer Questions.md</button>
+        <label for="configBrowserTitle">Browser-title</label>
+        <input id="configBrowserTitle" type="text" placeholder="Nanna STORE Quiz til Marius" />
+        <label for="configLiveLine">Live-linje</label>
+        <input id="configLiveLine" type="text" placeholder="Live fra konfirmationen..." />
+        <label for="configBackgroundImageUrl">Baggrundsbillede URL</label>
+        <input id="configBackgroundImageUrl" type="text" placeholder="/reference_code/Marius%20konf-17.png" />
+        <div class="row compact-row">
+          <button id="uploadBackgroundImageBtn" type="button" class="btn secondary">Upload baggrundsbillede</button>
         </div>
-        <p class="muted">Tip: du kan copy/paste et billede direkte på siden - det uploades til serveren.</p>
+        <div id="configBackgroundPreview" class="image-preview-box hidden"></div>
+        <div class="row">
+          <button id="saveConfigBtn" class="btn secondary">Gem branding</button>
+        </div>
       </div>
 
-      <div class="card">
-        <h2>Genveje</h2>
-        <p><a href="/screen" target="_blank" rel="noreferrer">/screen</a> · <a href="/play" target="_blank" rel="noreferrer">/play</a> · <a href="/marius" target="_blank" rel="noreferrer">/marius</a></p>
+      <div class="host-main-grid">
+        <div class="card editor-card">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Content studio</div>
+              <h2>Rediger spørgsmål</h2>
+              <p class="muted section-intro">Ét spørgsmål ad gangen. Start med teksten, vælg svarmuligheder og tilføj derefter billeder hvis du har brug for dem.</p>
+            </div>
+            <button id="toggleEditorBtn" type="button" class="btn secondary">Åbn editor</button>
+          </div>
+          <div class="editor-body">
+            <div class="editor-section">
+              <div class="editor-section-head">
+                <div class="eyebrow">1. Vælg spørgsmål</div>
+              </div>
+              <div class="row">
+                <select id="questionSelect"></select>
+                <button id="newQuestionBtn" class="btn secondary">Nyt</button>
+                <button id="deleteQuestionBtn" class="btn danger">Slet</button>
+              </div>
+            </div>
+
+            <div class="editor-section">
+              <div class="editor-section-head">
+                <div class="eyebrow">2. Opsætning</div>
+              </div>
+              <label for="qPrompt">Spørgsmål</label>
+              <textarea id="qPrompt" rows="3"></textarea>
+              <div class="row editor-settings">
+                <label class="toggle-pill"><input type="radio" name="qType" value="single" checked /> Single choice</label>
+                <label class="toggle-pill"><input type="radio" name="qType" value="multi" /> Multi choice</label>
+                <label class="time-field" for="qTime"><span>Tid (sek)</span><input id="qTime" type="number" min="5" max="90" /></label>
+                <label class="toggle-pill"><input id="qEnabled" type="checkbox" checked /> Aktiv</label>
+              </div>
+            </div>
+
+            <div class="editor-section">
+              <div class="editor-section-head">
+                <div class="eyebrow">3. Svarmuligheder</div>
+                <button id="addOptionBtn" type="button" class="btn secondary">Tilføj svarmulighed</button>
+              </div>
+              <div id="optionsWrap"></div>
+            </div>
+
+            <div class="editor-section">
+              <div class="editor-section-head">
+                <div class="eyebrow">4. Reveal</div>
+              </div>
+              <label for="qRevealText">Reveal tekst</label>
+              <textarea id="qRevealText" rows="2"></textarea>
+            </div>
+
+            <div class="editor-section">
+              <div class="editor-section-head">
+                <div class="eyebrow">5. Billeder</div>
+              </div>
+              <div class="row upload-row">
+                <div>
+                  <label>Samlet spørgsmålsbillede URL</label>
+                  <input id="qQuestionImageUrl" type="text" placeholder="/uploads/..." />
+                  <div class="row compact-row">
+                    <button id="uploadQuestionImageBtn" type="button" class="btn secondary">Upload samlet billede</button>
+                <button id="clearQuestionImageBtn" type="button" class="btn danger">Fjern billede</button>
+                  </div>
+                  <div id="qQuestionImagePreview" class="image-preview-box hidden"></div>
+                  <p class="muted">Brug dette når ét billede er selve spørgsmålet, og svarmulighederne står nedenunder.</p>
+                </div>
+                <div>
+                  <label>Reveal billede URL</label>
+                  <input id="qRevealImageUrl" type="text" placeholder="/uploads/..." />
+                  <div class="row compact-row">
+                    <button id="uploadRevealImageBtn" type="button" class="btn secondary">Upload reveal billede</button>
+                <button id="clearRevealImageBtn" type="button" class="btn danger">Fjern billede</button>
+                  </div>
+                  <div id="qRevealImagePreview" class="image-preview-box hidden"></div>
+                </div>
+              </div>
+              <div class="row editor-action-row">
+                <label>Upload billede <input id="imageUpload" type="file" accept="image/*" /></label>
+                <button id="saveQuestionBtn" class="btn">Gem spørgsmål</button>
+                <button id="importMdBtn" class="btn secondary">Importer Questions.md</button>
+              </div>
+              <p class="muted">Tip: du kan copy/paste et billede direkte på siden - det uploades til serveren.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="host-side-stack">
+          <div class="card">
+            <div class="eyebrow">Live svar</div>
+            <h2>Deltagere</h2>
+            <p id="hostSideDescription" class="muted">Her kan du holde øje med, om publikum og Marius er med.</p>
+          </div>
+          <div class="card">
+            <h2>Genveje</h2>
+            <p><a href="/screen" target="_blank" rel="noreferrer">/screen</a> · <a href="/play" target="_blank" rel="noreferrer">/play</a> · <a href="/konfirmant" target="_blank" rel="noreferrer">/konfirmant</a></p>
+          </div>
+        </div>
       </div>
       <div id="notice" class="notice hidden"></div>
     </section>

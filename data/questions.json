@@ -4,12 +4,12 @@
   "questions": [
     {
       "id": "q1",
-      "prompt": "Marius er bedre end Nanna til at lave mad.",
+      "prompt": "Er Marius bedre end Nanna til at lave mad?",
       "type": "single",
       "timeLimitSeconds": 15,
       "questionImageUrl": "",
-      "revealImageUrl": "",
-      "revealText": "Han laver i hvert fald god stemning i køkkenet.",
+      "revealImageUrl": "/uploads/mocqeqam_hjeile.jpg",
+      "revealText": "Han laver i hvert fald god stemning i køkkenet :-)",
       "enabled": true,
       "options": [
         {
@@ -17,34 +17,22 @@
           "text": "Sandt",
           "isCorrect": true,
           "color": "#ff4fa1",
-          "shape": "triangle"
+          "shape": "triangle",
+          "imageUrl": ""
         },
         {
           "id": "q1o2",
           "text": "Falsk",
           "isCorrect": false,
           "color": "#4666ff",
-          "shape": "diamond"
-        },
-        {
-          "id": "q1o3",
-          "text": "Kommer an på retten",
-          "isCorrect": false,
-          "color": "#ffad33",
-          "shape": "circle"
-        },
-        {
-          "id": "q1o4",
-          "text": "Ingen af dem",
-          "isCorrect": false,
-          "color": "#13a06f",
-          "shape": "square"
+          "shape": "diamond",
+          "imageUrl": ""
         }
       ]
     },
     {
       "id": "q2",
-      "prompt": "Hvilken dato og årstal er Marius født?",
+      "prompt": "Har Marius engang kørt ind i en lygtepæl på cykel?",
       "type": "single",
       "timeLimitSeconds": 18,
       "questionImageUrl": "",
@@ -54,37 +42,25 @@
       "options": [
         {
           "id": "q2o1",
-          "text": "17. august 2015",
+          "text": "Sandt",
           "isCorrect": false,
           "color": "#ff4fa1",
-          "shape": "triangle"
+          "shape": "triangle",
+          "imageUrl": ""
         },
         {
           "id": "q2o2",
-          "text": "20. august 2019",
-          "isCorrect": false,
-          "color": "#4666ff",
-          "shape": "diamond"
-        },
-        {
-          "id": "q2o3",
-          "text": "18. august 2012",
-          "isCorrect": false,
-          "color": "#ffad33",
-          "shape": "circle"
-        },
-        {
-          "id": "q2o4",
-          "text": "17. august 2012",
+          "text": "Falsk",
           "isCorrect": true,
-          "color": "#13a06f",
-          "shape": "square"
+          "color": "#4666ff",
+          "shape": "diamond",
+          "imageUrl": ""
         }
       ]
     },
     {
       "id": "q3",
-      "prompt": "Hvad kan Marius bedst lide?",
+      "prompt": "Hvilken dato og årstal er Marius født?",
       "type": "multi",
       "timeLimitSeconds": 20,
       "questionImageUrl": "",
@@ -94,37 +70,41 @@
       "options": [
         {
           "id": "q3o1",
-          "text": "Sushi",
-          "isCorrect": true,
+          "text": "17. August 2015",
+          "isCorrect": false,
           "color": "#ff4fa1",
-          "shape": "triangle"
+          "shape": "triangle",
+          "imageUrl": ""
         },
         {
           "id": "q3o2",
-          "text": "Laks",
-          "isCorrect": true,
+          "text": "20. August 2019",
+          "isCorrect": false,
           "color": "#4666ff",
-          "shape": "diamond"
+          "shape": "diamond",
+          "imageUrl": ""
         },
         {
           "id": "q3o3",
-          "text": "Pizza",
-          "isCorrect": true,
+          "text": "18. August 2012",
+          "isCorrect": false,
           "color": "#ffad33",
-          "shape": "circle"
+          "shape": "circle",
+          "imageUrl": ""
         },
         {
           "id": "q3o4",
-          "text": "Svampe",
-          "isCorrect": false,
+          "text": "17. August 2012",
+          "isCorrect": true,
           "color": "#13a06f",
-          "shape": "square"
+          "shape": "square",
+          "imageUrl": ""
         }
       ]
     },
     {
       "id": "q4",
-      "prompt": "Hvilken app bruger Marius mest?",
+      "prompt": "Hvilken hunderace er Marius favorit?",
       "type": "single",
       "timeLimitSeconds": 15,
       "questionImageUrl": "",
@@ -134,31 +114,255 @@
       "options": [
         {
           "id": "q4o1",
-          "text": "TikTok",
+          "text": "Labrador",
           "isCorrect": false,
           "color": "#ff4fa1",
-          "shape": "triangle"
+          "shape": "triangle",
+          "imageUrl": ""
         },
         {
           "id": "q4o2",
-          "text": "YouTube",
-          "isCorrect": true,
+          "text": "Kliener Münsterlænder",
+          "isCorrect": false,
           "color": "#4666ff",
-          "shape": "diamond"
+          "shape": "diamond",
+          "imageUrl": ""
         },
         {
           "id": "q4o3",
-          "text": "Instagram",
-          "isCorrect": false,
+          "text": "Golden Retriever",
+          "isCorrect": true,
           "color": "#ffad33",
-          "shape": "circle"
+          "shape": "circle",
+          "imageUrl": ""
         },
         {
           "id": "q4o4",
+          "text": "Ingen, Marius hader hunde",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square",
+          "imageUrl": ""
+        }
+      ]
+    },
+    {
+      "id": "qmoa0wp6j",
+      "prompt": "Hvad kan Marius bedst lide?",
+      "type": "single",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "",
+      "enabled": true,
+      "options": [
+        {
+          "id": "qmoa0wp6j_o1",
+          "text": "Sushi",
+          "isCorrect": true,
+          "color": "#ff4fa1",
+          "shape": "triangle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa0wp6j_o2",
+          "text": "Laks",
+          "isCorrect": false,
+          "color": "#4666ff",
+          "shape": "diamond",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa0wp6j_o3",
+          "text": "Pizza",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa0wp6j_o4",
+          "text": "Svampe",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square",
+          "imageUrl": ""
+        }
+      ]
+    },
+    {
+      "id": "qmoa0z2vx",
+      "prompt": "Hvilken sang er Marius' yndlingsang?",
+      "type": "single",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "",
+      "enabled": true,
+      "options": [
+        {
+          "id": "qmoa0z2vx_o1",
+          "text": "“En drøm om et menneske” - Aphaca*",
+          "isCorrect": true,
+          "color": "#ff4fa1",
+          "shape": "triangle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa0z2vx_o2",
+          "text": "“Lush life” - Zara Larsson",
+          "isCorrect": false,
+          "color": "#4666ff",
+          "shape": "diamond",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa0z2vx_o3",
+          "text": "“Flyvende Faduma” - Tobias Rahim",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa0z2vx_o4",
+          "text": "“Marius” - Grethe Sønck",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square",
+          "imageUrl": ""
+        }
+      ]
+    },
+    {
+      "id": "qmoa1335d",
+      "prompt": "Hvilken bil synes Marius bedst om?",
+      "type": "single",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "Bare gå efter lyden....",
+      "enabled": true,
+      "options": [
+        {
+          "id": "qmoa1335d_o1",
+          "text": "Opel Kadett",
+          "isCorrect": false,
+          "color": "#ff4fa1",
+          "shape": "triangle",
+          "imageUrl": "/uploads/mocsi0vj_xzs0tn.jpeg"
+        },
+        {
+          "id": "qmoa1335d_o2",
+          "text": "Tesla Cybertruck",
+          "isCorrect": false,
+          "color": "#4666ff",
+          "shape": "diamond",
+          "imageUrl": "/uploads/mocsi8he_fs6t82.png"
+        },
+        {
+          "id": "qmoa1335d_o3",
+          "text": "Amber ev",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle",
+          "imageUrl": "/uploads/mocsijwj_ban5rk.jpeg"
+        },
+        {
+          "id": "qmoa1335d_o4",
+          "text": "Maserati mc20",
+          "isCorrect": true,
+          "color": "#13a06f",
+          "shape": "square",
+          "imageUrl": "/uploads/mocsiqlo_tarhd5.png"
+        }
+      ]
+    },
+    {
+      "id": "qmoa14k9g",
+      "prompt": "Hvilken App bruger Marius mest?",
+      "type": "single",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "",
+      "revealImageUrl": "",
+      "revealText": "",
+      "enabled": true,
+      "options": [
+        {
+          "id": "qmoa14k9g_o1",
+          "text": "TikTok",
+          "isCorrect": false,
+          "color": "#ff4fa1",
+          "shape": "triangle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa14k9g_o2",
+          "text": "YouTube",
+          "isCorrect": true,
+          "color": "#4666ff",
+          "shape": "diamond",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa14k9g_o3",
+          "text": "Instagram",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa14k9g_o4",
           "text": "Snapchat",
           "isCorrect": false,
           "color": "#13a06f",
-          "shape": "square"
+          "shape": "square",
+          "imageUrl": ""
+        }
+      ]
+    },
+    {
+      "id": "qmoa16po1",
+      "prompt": "Hvad er Marius' hemmelige talent?",
+      "type": "single",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "",
+      "revealImageUrl": "/uploads/moct8578_4pi8hy.png",
+      "revealText": "",
+      "enabled": true,
+      "options": [
+        {
+          "id": "qmoa16po1_o1",
+          "text": "Lave papirsflyvere",
+          "isCorrect": false,
+          "color": "#ff4fa1",
+          "shape": "triangle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa16po1_o2",
+          "text": "Sætte hår i søvne",
+          "isCorrect": true,
+          "color": "#4666ff",
+          "shape": "diamond",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa16po1_o3",
+          "text": "Vaske vinduer",
+          "isCorrect": false,
+          "color": "#ffad33",
+          "shape": "circle",
+          "imageUrl": ""
+        },
+        {
+          "id": "qmoa16po1_o4",
+          "text": "Husker altid sin idrætstaske",
+          "isCorrect": false,
+          "color": "#13a06f",
+          "shape": "square",
+          "imageUrl": ""
         }
       ]
     }

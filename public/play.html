@@ -7,30 +7,63 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="play-body">
-  <main class="container">
-    <section class="card">
-      <h1>Spil med</h1>
-      <div class="row">
-        <input id="nameInput" type="text" placeholder="Dit navn" maxlength="24" />
-        <input id="avatarInput" type="text" value="🎉" maxlength="4" />
+  <div class="site-brand-banner">
+    <div class="site-brand-shell">
+      <div class="site-brand-text">
+        <span id="brandHostText" class="brand-nanna">Nannas</span>
+        <span class="brand-store">STORE</span>
+        <span class="brand-rest">quiz til</span>
+        <span id="brandCelebrantText" class="brand-marius">Marius</span>
       </div>
-      <button id="saveIdentityBtn" class="btn secondary">Gem navn</button>
+      <div class="site-breaking">
+        <span class="breaking-dot"></span>
+        <span id="liveLineText" class="breaking-label">Live fra konfirmationen den 2. maj i Den Japanske Have</span>
+      </div>
+    </div>
+  </div>
+  <main class="container mobile-shell">
+    <section class="card mobile-hero" id="identityCard">
+      <div id="identityEditor">
+        <div class="eyebrow">Game Controller</div>
+        <h1>Spil med</h1>
+        <p class="muted">Vælg navn og tryk hurtigt, når spørgsmålet åbner.</p>
+        <div class="row identity-row">
+          <input id="nameInput" type="text" placeholder="Dit navn" maxlength="24" />
+        </div>
+        <div class="avatar-picker-card">
+          <div class="row avatar-picker-head">
+            <div>
+              <div class="eyebrow">Vælg avatar</div>
+              <p class="muted">Vælg fra listen eller upload dit eget billede.</p>
+            </div>
+            <div id="avatarPreview" class="avatar-preview"></div>
+          </div>
+          <div id="avatarGrid" class="avatar-grid"></div>
+          <div class="row">
+            <button id="uploadAvatarBtn" type="button" class="btn secondary">Upload eget avatarbillede</button>
+            <input id="avatarUploadInput" type="file" accept="image/*" class="hidden" />
+          </div>
+        </div>
+        <button id="saveIdentityBtn" class="btn secondary">Gem navn</button>
+      </div>
+      <div id="identitySummary" class="identity-summary hidden">
+        <div id="identitySummaryAvatar" class="avatar-preview"></div>
+        <div class="identity-summary-text">
+          <div class="eyebrow">Klar til spil</div>
+          <strong id="identitySummaryName">Ukendt</strong>
+        </div>
+        <button id="editIdentityBtn" type="button" class="btn secondary">Ret</button>
+      </div>
     </section>
 
-    <section class="card">
-      <p id="phaseText">Venter på host...</p>
-      <h2 id="questionPrompt">-</h2>
+    <section class="card question-shell">
+      <div class="phase-chip" id="phaseText">Venter på host...</div>
+      <h2 id="questionPrompt" class="question-title">-</h2>
       <img id="questionImage" class="question-image hidden" alt="Spørgsmålsbillede" />
       <div id="optionGrid" class="option-grid"></div>
-      <div class="row">
-        <button id="submitBtn" class="btn">Svar nu</button>
-      </div>
-      <p id="feedback" class="muted"></p>
-    </section>
-
-    <section class="card">
-      <h3>Leaderboard</h3>
-      <div id="leaderboard"></div>
+      <div id="submitHint" class="auto-save-note">Dit svar gemmes automatisk, når du trykker. Du kan ændre det, så længe tiden kører.</div>
+      <p id="feedback" class="feedback-line muted"></p>
+      <div id="resultSummary" class="hidden result-summary-card"></div>
     </section>
   </main>
   <script src="/socket.io/socket.io.js"></script>

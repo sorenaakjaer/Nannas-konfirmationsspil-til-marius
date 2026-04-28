@@ -15,10 +15,13 @@ const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || null;
 const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
-const UPLOAD_DIR = path.join(PUBLIC_DIR, 'uploads');
+const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const QUESTIONS_FILE = path.join(DATA_DIR, 'questions.json');
+const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const STATE_FILE = path.join(DATA_DIR, 'state.json');
 const ROOT_QUESTIONS_MD = path.join(ROOT_DIR, 'Questions.md');
+const REVEAL_PHASE_MS = 5000;
+const PRE_QUESTION_MS = 5000;
 
 for (const dir of [DATA_DIR, PUBLIC_DIR, UPLOAD_DIR]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -32,18 +35,37 @@ function safeReadJson(filePath, fallback) {
   }
 }
 
+function normalizeConfig(raw) {
+  const hostName = String(raw?.hostName || 'Nanna').trim() || 'Nanna';
+  const celebrantName = String(raw?.celebrantName || 'Marius').trim() || 'Marius';
+  const liveLine = String(raw?.liveLine || 'Live fra konfirmationen den 2. maj i Den Japanske Have').trim()
+    || 'Live fra konfirmationen den 2. maj i Den Japanske Have';
+  const backgroundImageUrl = String(raw?.backgroundImageUrl || '/reference_code/Marius%20konf-17.png').trim()
+    || '/reference_code/Marius%20konf-17.png';
+  const browserTitle = String(raw?.browserTitle || `${hostName} STORE Quiz til ${celebrantName}`).trim()
+    || `${hostName} STORE Quiz til ${celebrantName}`;
+  return { hostName, celebrantName, liveLine, backgroundImageUrl, browserTitle };
+}
+
+function brandHostText(name) {
+  const trimmed = String(name || '').trim();
+  if (!trimmed) return 'Nannas';
+  return trimmed.endsWith('s') ? trimmed : `${trimmed}s`;
+}
+
 function normalizeQuestion(raw, index) {
   const palette = ['#ff4fa1', '#4666ff', '#ffad33', '#13a06f'];
   const shapes = ['triangle', 'diamond', 'circle', 'square'];
   const id = raw.id || `q${Date.now().toString(36)}${index}`;
-  const options = (raw.options || []).slice(0, 4).map((opt, idx) => ({
+  const options = (raw.options || []).slice(0, 8).map((opt, idx) => ({
     id: opt.id || `${id}_o${idx + 1}`,
     text: String(opt.text || `Svar ${idx + 1}`).slice(0, 90),
     isCorrect: Boolean(opt.isCorrect),
     color: opt.color || palette[idx % palette.length],
     shape: opt.shape || shapes[idx % shapes.length],
+    imageUrl: String(opt.imageUrl || '').slice(0, 500),
   }));
-  while (options.length < 4) {
+  while (options.length < 2) {
     const idx = options.length;
     options.push({
       id: `${id}_o${idx + 1}`,
@@ -51,6 +73,7 @@ function normalizeQuestion(raw, index) {
       isCorrect: false,
       color: palette[idx % palette.length],
       shape: shapes[idx % shapes.length],
+      imageUrl: '',
     });
   }
   const hasAnyCorrect = options.some((o) => o.isCorrect);
@@ -97,13 +120,14 @@ function parseQuestionsFromMarkdown(markdownText) {
     const prompt = block[0];
     const choicesRaw = block.slice(1).filter((v) => v);
     if (choicesRaw.length < 2) continue;
-    const options = choicesRaw.slice(0, 4).map((choice, idx) => {
+    const options = choicesRaw.slice(0, 8).map((choice, idx) => {
       const isCorrect = /\*$/.test(choice.trim());
       const clean = choice.replace(/\*+$/, '').trim();
       return {
         id: `q${questions.length + 1}o${idx + 1}`,
         text: clean,
         isCorrect,
+        imageUrl: '',
       };
     });
     const correctCount = options.filter((o) => o.isCorrect).length;
@@ -132,6 +156,7 @@ function createDefaultQuestionDoc() {
 }
 
 let questionDoc = createDefaultQuestionDoc();
+let configDoc = normalizeConfig(safeReadJson(CONFIG_FILE, {}));
 if ((!questionDoc.questions || !questionDoc.questions.length) && fs.existsSync(ROOT_QUESTIONS_MD)) {
   const imported = parseQuestionsFromMarkdown(fs.readFileSync(ROOT_QUESTIONS_MD, 'utf8'));
   if (imported.length) {
@@ -141,9 +166,11 @@ if ((!questionDoc.questions || !questionDoc.questions.length) && fs.existsSync(R
 }
 questionDoc.questions = (questionDoc.questions || []).map(normalizeQuestion);
 saveQuestions(questionDoc);
+fs.writeFileSync(CONFIG_FILE, JSON.stringify(configDoc, null, 2));
 
 const state = {
   phase: 'lobby',
+  lobbyView: 'intro',
   phaseEndsAt: null,
   questionOrder: [],
   questionPointer: -1,
@@ -156,6 +183,7 @@ const state = {
     correctOptionIds: [],
     top3: [],
     huntPlayers: [],
+    pointAwards: {},
   },
   players: {},
   knownGuests: {},
@@ -163,15 +191,21 @@ const state = {
 };
 
 const savedState = safeReadJson(STATE_FILE, null);
-if (savedState && savedState.players && savedState.knownGuests) {
-  state.players = savedState.players;
-  state.knownGuests = savedState.knownGuests;
+if (savedState) {
+  if (savedState.players && savedState.knownGuests) {
+    state.players = savedState.players;
+    state.knownGuests = savedState.knownGuests;
+  }
+  if (Number.isFinite(savedState.selectedQuestionCount)) {
+    state.selectedQuestionCount = Math.max(1, Math.min(questionDoc.questions.length || 1, Number(savedState.selectedQuestionCount)));
+  }
 }
 
 function persistState() {
   const persisted = {
     players: state.players,
     knownGuests: state.knownGuests,
+    selectedQuestionCount: state.selectedQuestionCount,
   };
   fs.writeFileSync(STATE_FILE, JSON.stringify(persisted, null, 2));
 }
@@ -202,6 +236,8 @@ function computeLeaderboard() {
       points: p.points || 0,
       correctCount: p.correctCount || 0,
       answeredCount: p.answeredCount || 0,
+      streak: p.streak || 0,
+      pointsDelta: state.round.pointAwards?.[sessionId]?.points || 0,
     }))
     .sort((a, b) => b.points - a.points || b.correctCount - a.correctCount || a.name.localeCompare(b.name));
 }
@@ -227,19 +263,36 @@ function concealQuestion(q, reveal = false) {
       text: opt.text,
       color: opt.color,
       shape: opt.shape,
+      imageUrl: opt.imageUrl || '',
     })),
     ...(reveal ? { correctOptionIds: q.options.filter((o) => o.isCorrect).map((o) => o.id) } : {}),
   };
 }
 
 function publicView() {
+  configDoc = normalizeConfig(safeReadJson(CONFIG_FILE, configDoc));
   const q = currentQuestion();
   const reveal = state.phase === 'answer_reveal' || state.phase === 'scoreboard' || state.phase === 'finale';
   const leaderboard = computeLeaderboard();
+  const answerEntries = Object.entries(state.round.answers || {});
+  const awardedEntries = Object.values(state.round.pointAwards || {});
+  const correctGuests = awardedEntries.filter((award) => award.isCorrect).length;
+  const incorrectGuests = Math.max(0, answerEntries.length - correctGuests);
   return {
-    title: questionDoc.title || 'Nanna STORE Quiz til Marius',
+    config: {
+      ...configDoc,
+      hostBrandText: brandHostText(configDoc.hostName),
+      quizTitle: `${brandHostText(configDoc.hostName)} STORE quiz til ${configDoc.celebrantName}`,
+    },
+    title: `${brandHostText(configDoc.hostName)} STORE quiz til ${configDoc.celebrantName}`,
     phase: state.phase,
+    lobbyView: state.lobbyView,
     phaseEndsAt: state.phaseEndsAt,
+    phaseDurationMs: state.phase === 'pre_question'
+      ? PRE_QUESTION_MS
+      : state.phase === 'question_open' && q
+        ? q.timeLimitSeconds * 1000
+        : 0,
     selectedQuestionCount: state.selectedQuestionCount,
     questionIndex: state.questionPointer + 1,
     totalQuestions: state.questionOrder.length || state.selectedQuestionCount,
@@ -250,6 +303,15 @@ function publicView() {
       answersCount: Object.keys(state.round.answers).length,
       mariusAnswered: Boolean(state.round.mariusAnswer),
       mariusAnswer: reveal ? state.round.mariusAnswer : null,
+      mariusCorrect: reveal ? Boolean(state.round.mariusAnswer?.isCorrect) : null,
+      correctGuests: reveal ? correctGuests : 0,
+      incorrectGuests: reveal ? incorrectGuests : 0,
+      guestResults: reveal ? Object.fromEntries(
+        Object.entries(state.round.answers || {}).map(([sessionId, answer]) => [
+          sessionId,
+          { isCorrect: Boolean(answer.isCorrect), points: Number(answer.points || 0) },
+        ]),
+      ) : {},
       top3: state.round.top3,
       huntPlayers: state.round.huntPlayers,
     },
@@ -272,6 +334,8 @@ const io = new Server(server);
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(PUBLIC_DIR));
+app.use('/uploads', express.static(UPLOAD_DIR));
+app.use('/reference_code', express.static(path.join(ROOT_DIR, 'reference_code')));
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
@@ -292,7 +356,8 @@ const upload = multer({
 app.get('/screen', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'screen.html')));
 app.get('/host', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'host.html')));
 app.get('/play', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'play.html')));
-app.get('/marius', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'marius.html')));
+app.get('/konfirmant', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'marius.html')));
+app.get('/marius', (_req, res) => res.redirect('/konfirmant'));
 app.get('/', (_req, res) => res.redirect('/screen'));
 
 app.get('/api/state', (_req, res) => res.json(publicView()));
@@ -311,19 +376,63 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.json({ ok: true, url: `/uploads/${req.file.filename}` });
 });
 
+app.post('/api/upload-avatar', upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ ok: false, error: 'Mangler billedfil' });
+  res.json({ ok: true, url: `/uploads/${req.file.filename}` });
+});
+
 let autoLockTimer = null;
+let autoAdvanceTimer = null;
+let autoQuestionStartTimer = null;
 function clearAutoLockTimer() {
   if (autoLockTimer) {
     clearTimeout(autoLockTimer);
     autoLockTimer = null;
   }
 }
-
-function startQuestionRound() {
-  const questionId = state.questionOrder[state.questionPointer] || null;
-  const q = getQuestionById(questionId);
-  if (!q) return false;
+function clearAutoAdvanceTimer() {
+  if (autoAdvanceTimer) {
+    clearTimeout(autoAdvanceTimer);
+    autoAdvanceTimer = null;
+  }
+}
+function clearAutoQuestionStartTimer() {
+  if (autoQuestionStartTimer) {
+    clearTimeout(autoQuestionStartTimer);
+    autoQuestionStartTimer = null;
+  }
+}
+function clearPhaseTimers() {
   clearAutoLockTimer();
+  clearAutoAdvanceTimer();
+  clearAutoQuestionStartTimer();
+}
+function scheduleQuestionTimeout(ms) {
+  clearAutoLockTimer();
+  autoLockTimer = setTimeout(() => {
+    if (advanceToAnswerReveal()) broadcast();
+  }, ms);
+}
+function scheduleScoreboardAuto(ms = REVEAL_PHASE_MS) {
+  clearAutoAdvanceTimer();
+  autoAdvanceTimer = setTimeout(() => {
+    if (state.phase === 'answer_reveal') {
+      state.phase = 'scoreboard';
+      state.phaseEndsAt = null;
+      broadcast();
+    }
+  }, ms);
+}
+
+function currentQueuedQuestion() {
+  const questionId = state.questionOrder[state.questionPointer] || null;
+  return getQuestionById(questionId);
+}
+
+function beginQuestionRound() {
+  const q = currentQueuedQuestion();
+  if (!q) return false;
+  clearPhaseTimers();
   state.phase = 'question_open';
   state.activeQuestionId = q.id;
   state.round = {
@@ -333,9 +442,23 @@ function startQuestionRound() {
     correctOptionIds: q.options.filter((o) => o.isCorrect).map((o) => o.id).sort(),
     top3: [],
     huntPlayers: [],
+    pointAwards: {},
   };
   state.phaseEndsAt = Date.now() + q.timeLimitSeconds * 1000;
-  autoLockTimer = setTimeout(() => lockQuestionRound(), q.timeLimitSeconds * 1000);
+  scheduleQuestionTimeout(q.timeLimitSeconds * 1000);
+  return true;
+}
+
+function queueQuestionRound() {
+  const q = currentQueuedQuestion();
+  if (!q) return false;
+  clearPhaseTimers();
+  state.phase = 'pre_question';
+  state.activeQuestionId = q.id;
+  state.phaseEndsAt = Date.now() + PRE_QUESTION_MS;
+  autoQuestionStartTimer = setTimeout(() => {
+    if (beginQuestionRound()) broadcast();
+  }, PRE_QUESTION_MS);
   return true;
 }
 
@@ -366,6 +489,7 @@ function lockQuestionRound() {
   for (const [sessionId, answer] of Object.entries(state.round.answers)) {
     const player = state.players[sessionId];
     if (!player) continue;
+    const previousStreak = player.streak || 0;
     const isCorrect = isAnswerCorrect(answer.optionIds, correctIds);
     const elapsed = Math.max(0, answer.submittedAt - state.round.startedAt);
     const speedRatio = Math.max(0, Math.min(1, 1 - elapsed / roundDuration));
@@ -375,9 +499,31 @@ function lockQuestionRound() {
     player.answeredCount = (player.answeredCount || 0) + 1;
     if (isCorrect) player.correctCount = (player.correctCount || 0) + 1;
     player.points = (player.points || 0) + points;
+    state.round.pointAwards[sessionId] = {
+      points,
+      isCorrect,
+      prevPoints: player.points - points,
+      prevAnsweredCount: player.answeredCount - 1,
+      prevCorrectCount: isCorrect ? player.correctCount - 1 : player.correctCount,
+      prevStreak: previousStreak,
+    };
+    player.streak = isCorrect ? (player.streak || 0) + 1 : 0;
   }
   persistState();
   return true;
+}
+
+function rollbackCurrentRoundScores() {
+  for (const [sessionId, award] of Object.entries(state.round.pointAwards || {})) {
+    const player = state.players[sessionId];
+    if (!player) continue;
+    player.points = award.prevPoints ?? Math.max(0, (player.points || 0) - (award.points || 0));
+    player.answeredCount = award.prevAnsweredCount ?? Math.max(0, (player.answeredCount || 0) - 1);
+    player.correctCount = award.prevCorrectCount ?? Math.max(0, (player.correctCount || 0) - (award.isCorrect ? 1 : 0));
+    player.streak = award.prevStreak ?? 0;
+  }
+  state.round.pointAwards = {};
+  persistState();
 }
 
 function revealAnswer() {
@@ -388,6 +534,13 @@ function revealAnswer() {
   const leaderboard = computeLeaderboard();
   state.round.top3 = leaderboard.slice(0, 3);
   state.round.huntPlayers = computeHuntPlayers(leaderboard);
+  return true;
+}
+
+function advanceToAnswerReveal() {
+  const ok = revealAnswer();
+  if (!ok) return false;
+  scheduleScoreboardAuto();
   return true;
 }
 
@@ -406,21 +559,22 @@ function openNextQuestion() {
     state.questionPointer = -1;
   }
   if (state.questionPointer + 1 >= state.questionOrder.length) {
+    clearPhaseTimers();
     state.phase = 'finale';
     state.phaseEndsAt = null;
     state.finalTop4 = computeLeaderboard().slice(0, 4);
     return { ok: true, finale: true };
   }
   state.questionPointer += 1;
-  const ok = startQuestionRound();
+  const ok = queueQuestionRound();
   if (!ok) return { ok: false, error: 'Kunne ikke starte næste spørgsmål' };
   return { ok: true, finale: false };
 }
 
-function startGame(questionCount) {
+function startGame() {
   const enabled = sortedEnabledQuestions();
   if (!enabled.length) return { ok: false, error: 'Ingen spørgsmål er aktiveret' };
-  const selectedCount = Math.max(1, Math.min(enabled.length, Number(questionCount) || state.selectedQuestionCount || enabled.length));
+  const selectedCount = enabled.length;
   state.selectedQuestionCount = selectedCount;
   state.questionOrder = enabled.slice(0, selectedCount).map((q) => q.id);
   state.questionPointer = -1;
@@ -430,13 +584,15 @@ function startGame(questionCount) {
     player.points = 0;
     player.correctCount = 0;
     player.answeredCount = 0;
+    player.streak = 0;
   }
   return openNextQuestion();
 }
 
 function resetGame() {
-  clearAutoLockTimer();
+  clearPhaseTimers();
   state.phase = 'lobby';
+  state.lobbyView = 'intro';
   state.phaseEndsAt = null;
   state.questionOrder = [];
   state.questionPointer = -1;
@@ -448,12 +604,14 @@ function resetGame() {
     correctOptionIds: [],
     top3: [],
     huntPlayers: [],
+    pointAwards: {},
   };
   state.finalTop4 = [];
   for (const player of Object.values(state.players)) {
     player.points = 0;
     player.correctCount = 0;
     player.answeredCount = 0;
+    player.streak = 0;
   }
   persistState();
 }
@@ -502,14 +660,15 @@ io.on('connection', (socket) => {
   socket.on('guest:identity', ({ sessionId, name, avatar } = {}) => {
     const id = String(sessionId || makeSessionId('g'));
     const safeName = String(name || 'Ukendt').trim().slice(0, 24) || 'Ukendt';
-    const safeAvatar = String(avatar || '🎉').slice(0, 4);
+    const rawAvatar = String(avatar || '🎉').trim();
+    const safeAvatar = rawAvatar.startsWith('/uploads/') ? rawAvatar.slice(0, 500) : rawAvatar.slice(0, 4);
     state.knownGuests[id] = {
       sessionId: id,
       name: safeName,
       avatar: safeAvatar,
       joinedAt: state.knownGuests[id]?.joinedAt || Date.now(),
     };
-    state.players[id] = state.players[id] || { points: 0, correctCount: 0, answeredCount: 0 };
+    state.players[id] = state.players[id] || { points: 0, correctCount: 0, answeredCount: 0, streak: 0 };
     state.players[id].name = safeName;
     state.players[id].avatar = safeAvatar;
     persistState();
@@ -576,18 +735,24 @@ io.on('connection', (socket) => {
     broadcast();
   });
 
-  socket.on('host:set-question-count', ({ pin, count } = {}) => {
+  socket.on('host:start', ({ pin, count } = {}) => {
     if (!requireHost(pin, socket)) return;
-    const enabled = sortedEnabledQuestions();
-    state.selectedQuestionCount = Math.max(1, Math.min(enabled.length || 1, Number(count) || 1));
-    socket.emit('host:set-question-count:result', { ok: true });
+    const result = startGame();
+    socket.emit('host:start:result', result);
     broadcast();
   });
 
-  socket.on('host:start', ({ pin, count } = {}) => {
+  socket.on('host:show-qr', ({ pin } = {}) => {
     if (!requireHost(pin, socket)) return;
-    const result = startGame(count);
-    socket.emit('host:start:result', result);
+    state.lobbyView = 'qr';
+    socket.emit('host:show-qr:result', { ok: true });
+    broadcast();
+  });
+
+  socket.on('host:show-intro', ({ pin } = {}) => {
+    if (!requireHost(pin, socket)) return;
+    state.lobbyView = 'intro';
+    socket.emit('host:show-intro:result', { ok: true });
     broadcast();
   });
 
@@ -616,6 +781,34 @@ io.on('connection', (socket) => {
     if (!requireHost(pin, socket)) return;
     const result = openNextQuestion();
     socket.emit('host:next:result', result);
+    broadcast();
+  });
+
+  socket.on('host:restart-current', ({ pin } = {}) => {
+    if (!requireHost(pin, socket)) return;
+    if (!state.activeQuestionId || state.questionPointer < 0) {
+      socket.emit('host:restart-current:result', { ok: false, error: 'Intet aktivt spørgsmål at starte forfra' });
+      return;
+    }
+    if (state.phase !== 'question_open' && state.round.pointAwards && Object.keys(state.round.pointAwards).length) {
+      rollbackCurrentRoundScores();
+    }
+    const ok = queueQuestionRound();
+    socket.emit('host:restart-current:result', { ok, error: ok ? null : 'Kunne ikke starte spørgsmålet forfra' });
+    broadcast();
+  });
+
+  socket.on('host:add-time', ({ pin, extraSeconds } = {}) => {
+    if (!requireHost(pin, socket)) return;
+    if (state.phase !== 'question_open' || !state.phaseEndsAt) {
+      socket.emit('host:add-time:result', { ok: false, error: 'Du kan kun give mere tid mens spørgsmålet er åbent' });
+      return;
+    }
+    const extra = Math.max(1, Math.min(60, Number(extraSeconds) || 10));
+    const remaining = Math.max(0, state.phaseEndsAt - Date.now());
+    state.phaseEndsAt = Date.now() + remaining + extra * 1000;
+    scheduleQuestionTimeout(remaining + extra * 1000);
+    socket.emit('host:add-time:result', { ok: true, extraSeconds: extra });
     broadcast();
   });
 
@@ -650,6 +843,14 @@ io.on('connection', (socket) => {
     else questionDoc.questions.push(normalized);
     saveQuestions(questionDoc);
     socket.emit('host:save-question:result', { ok: true, id: normalized.id });
+    broadcast();
+  });
+
+  socket.on('host:save-config', ({ pin, config } = {}) => {
+    if (!requireHost(pin, socket)) return;
+    configDoc = normalizeConfig(config || {});
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(configDoc, null, 2));
+    socket.emit('host:save-config:result', { ok: true });
     broadcast();
   });
 
