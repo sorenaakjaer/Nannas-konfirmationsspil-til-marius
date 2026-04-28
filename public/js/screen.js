@@ -227,7 +227,7 @@
   }
 
   function renderPreQuestion(s) {
-    const upcoming = (s.questionIndex || 0) + 1;
+    const upcoming = Math.max(1, Math.min(Number(s.questionIndex || 1), Number(s.totalQuestions || 1)));
     const total = s.totalQuestions || 0;
     stage.innerHTML = `
       <div class="pre-question-stage">
@@ -292,6 +292,8 @@
     const realTop4 = s.finalTop4 || [];
     const celebrant = s.config?.celebrantName || 'Marius';
     const hostName = s.config?.hostName || 'Nanna';
+    const topPoints = realTop4.length ? Number(realTop4[0].points || 0) : 0;
+    const mariusPoints = Math.max(10000, topPoints + 1000);
     const second = realTop4[0];
     const third = realTop4[1];
     const fourth = realTop4[2];
@@ -302,7 +304,7 @@
           <div class="finale-avatar">${renderAvatar(avatar, 'large')}</div>
         </div>
         <div class="finale-name">${escapeHtml(name || 'Tom plads')}</div>
-        <div class="finale-points">${points != null ? `${points} point` : (sub || '')}</div>
+        <div class="finale-points">${points != null ? `${points.toLocaleString('da-DK')} point` : (sub || '')}</div>
         <div class="finale-block">
           <div class="finale-block-rank">${place}</div>
         </div>
@@ -315,17 +317,17 @@
           <span>Dagens vinder</span>
           <span class="finale-banner-spark">✨</span>
         </div>
-        <h1 class="finale-headline">${escapeHtml(celebrant)} <span>tager hjem med kronen</span></h1>
+        <h1 class="finale-headline">${escapeHtml(celebrant)}</h1>
         <div class="finale-podium-stage">
           ${second ? renderPodiumCard(2, second.name, second.avatar, second.points) : `<div class="finale-podium-step finale-place-2 finale-empty"><div class="finale-block"><div class="finale-block-rank">2</div></div></div>`}
-          ${renderPodiumCard(1, celebrant, '👑', null, 'Dagens hovedperson', 'is-celebrant')}
+          ${renderPodiumCard(1, celebrant, '👑', mariusPoints, null, 'is-celebrant')}
           ${third ? renderPodiumCard(3, third.name, third.avatar, third.points) : `<div class="finale-podium-step finale-place-3 finale-empty"><div class="finale-block"><div class="finale-block-rank">3</div></div></div>`}
         </div>
         ${fourth ? `
           <div class="finale-honourable">
             <span class="finale-honourable-badge">🎖️ 4. plads</span>
             <span class="finale-honourable-name">${renderAvatar(fourth.avatar, 'large')} ${escapeHtml(fourth.name)}</span>
-            <span class="finale-honourable-points">${fourth.points} point</span>
+            <span class="finale-honourable-points">${Number(fourth.points || 0).toLocaleString('da-DK')} point</span>
           </div>
         ` : ''}
         <div class="finale-thanks">
@@ -372,9 +374,9 @@
           <div class="sidebar-podium-avatar">${renderAvatar(p.avatar, 'large')}</div>
           <div class="sidebar-podium-name">${escapeHtml(p.name)}</div>
           <div class="sidebar-podium-points">
-            <span class="leaderboard-points" data-leaderboard-points data-target-points="${p.points}" data-from-points="${fromPoints}">${fromPoints}</span>
+            ${pointsDelta > 0 ? `<span class="points-badge">+${pointsDelta.toLocaleString('da-DK')}</span>` : ''}
+            <span class="leaderboard-points" data-leaderboard-points data-target-points="${p.points}" data-from-points="${fromPoints}">${fromPoints.toLocaleString('da-DK')}</span>
             <small>point</small>
-            ${pointsDelta > 0 ? `<span class="points-badge">+${pointsDelta}</span>` : ''}
           </div>
         </div>`;
     }).join('');
@@ -383,7 +385,7 @@
         const target = Number(el.dataset.targetPoints || 0);
         const from = Number(el.dataset.fromPoints || 0);
         if (from === target) {
-          el.textContent = `${target}`;
+          el.textContent = target.toLocaleString('da-DK');
           return;
         }
         const duration = 900;
@@ -391,7 +393,7 @@
         function step(now) {
           const t = Math.min(1, (now - start) / duration);
           const value = Math.round(from + (target - from) * t);
-          el.textContent = `${value}`;
+          el.textContent = value.toLocaleString('da-DK');
           if (t < 1) requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
