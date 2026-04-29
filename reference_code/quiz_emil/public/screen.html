@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alle mod Emil — Storskærm</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="screen">
+    <header class="screen-header">
+      <div class="brand-block">
+        <div class="brand">
+          <span class="b1">ALLE MOD</span>
+          <span class="b-strike-wrap">
+            <span class="b-strike">1</span>
+            <svg class="b-cross" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <line x1="10" y1="15" x2="90" y2="85" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+              <line x1="10" y1="85" x2="90" y2="15" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="b-emil">EMIL</span>
+        </div>
+        <div class="brand-occasion">Konfirmation · 25. april</div>
+      </div>
+      <div class="header-right">
+        <div class="round-info" id="roundInfo">Klar til start</div>
+      </div>
+    </header>
+
+    <section class="scoreboard">
+      <div class="score-card emil">
+        <div class="label">Emil</div>
+        <div class="value" id="emilCandy">0</div>
+        <div class="unit">Kinder Maxi</div>
+      </div>
+      <div class="versus">VS</div>
+      <div class="score-card guests">
+        <div class="label">Gæsterne</div>
+        <div class="value" id="guestsCandy">0</div>
+        <div class="unit">Kinder Maxi</div>
+      </div>
+    </section>
+
+    <div class="main-row">
+      <section class="stage" id="stage">
+        <div class="start-screen" id="phase-idle">
+          <h1>Velkommen til <span class="brand"><span class="b1">ALLE MOD</span><span class="b2">EMIL</span></span></h1>
+          <p>100 Kinder Maxi står på spil. Vinder Emil — eller os?</p>
+          <p style="opacity:.7">Værten kan starte showet fra kontrolpanelet.</p>
+        </div>
+      </section>
+
+      <aside class="ladder" id="ladder">
+        <div class="ladder-title">Belønningsstigen</div>
+        <div class="ladder-steps" id="ladderSteps"></div>
+        <div class="ladder-total">I alt: <strong id="ladderTotal">100</strong> 🍫</div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/sounds.js"></script>
+  <script src="/js/screen.js"></script>
+</body>
+</html>

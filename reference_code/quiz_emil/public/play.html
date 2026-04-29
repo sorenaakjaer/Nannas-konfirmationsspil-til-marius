@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Alle mod Emil — Spil med</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="guest-page">
+    <div class="brand">
+      <span class="b1">ALLE MOD</span>
+      <span class="b-strike-wrap">
+        <span class="b-strike">1</span>
+        <svg class="b-cross" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="10" y1="15" x2="90" y2="85" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+          <line x1="10" y1="85" x2="90" y2="15" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="b-emil">EMIL</span>
+    </div>
+    <p class="subtitle" style="margin: 0.2rem 0 0; font-size: 0.85rem;">Emils konfirmation · 25. april</p>
+
+    <!-- IDENTITY BAR (always visible after first save) -->
+    <div class="identity-bar" id="identityBar" style="display:none;">
+      <button class="identity-btn" id="editIdentityBtn">
+        <span class="i-avatar" id="iAvatar">🙂</span>
+        <span class="i-name" id="iName">Gæst</span>
+        <span class="i-edit">✏️</span>
+      </button>
+    </div>
+
+    <!-- IDENTITY EDITOR -->
+    <div class="guest-card" id="identityCard">
+      <h2 id="identityTitle">Hvad hedder du?</h2>
+      <p style="color: var(--text-dim); margin: 0 0 1rem;">Vælg navn + avatar — kan ændres senere.</p>
+      <div class="field">
+        <label for="nameInput">Dit navn</label>
+        <input id="nameInput" type="text" placeholder="F.eks. Mormor Inger" maxlength="24" autocomplete="given-name" />
+      </div>
+      <div class="field">
+        <label>Vælg din avatar</label>
+        <div class="picked-avatar" id="pickedAvatar">
+          <span class="pa-emoji" id="pickedAvatarEmoji">🙂</span>
+          <span class="pa-text">← din valgte avatar</span>
+        </div>
+        <div class="avatar-grid-wrap">
+          <div class="avatar-grid" id="avatarGrid"></div>
+        </div>
+      </div>
+      <button class="btn" id="saveIdentityBtn">Gem og spil med</button>
+      <div class="btn-row" style="margin-top:.7rem;">
+        <button class="btn ghost" id="anonymousBtn">Spil anonymt 🎭</button>
+        <button class="btn ghost" id="cancelIdentityBtn" style="display:none;">Annullér</button>
+      </div>
+    </div>
+
+    <!-- WAITING / NO ACTIVE QUESTION -->
+    <div class="guest-card" id="waitCard" style="display:none;">
+      <div class="phase-pill" id="waitPhase">venter</div>
+      <h2 id="waitTitle" style="margin-top: 0.8rem;">Venter på næste spørgsmål...</h2>
+      <p id="waitText" style="color: var(--text-dim);"></p>
+    </div>
+
+    <!-- QUESTION (Emil + guests both submit here) -->
+    <div class="guest-card" id="answerCard" style="display:none;">
+      <div class="countdown" id="countdownGuest"><span class="cd-label">Tid tilbage</span><span class="cd-value">--</span></div>
+      <div class="phase-pill">Runde <span id="aRound">1</span></div>
+      <h2 id="aQuestion" style="margin-top: 0.8rem;">…</h2>
+      <div class="range-badge" id="aRange" style="display:none;"></div>
+      <p id="aHint" style="color: var(--text-dim); font-style: italic; margin-top: 0.4rem;"></p>
+      <div class="reward-pill">🍫 <span id="aReward">0</span> stk. på spil</div>
+
+      <div class="field" style="margin-top: 1.5rem;">
+        <label for="guessInput">Dit gæt (i <span id="aUnit">enheder</span>)</label>
+        <input id="guessInput" class="big-number" type="number" step="1" inputmode="numeric" placeholder="0" />
+      </div>
+      <button class="btn" id="submitBtn">SEND MIT GÆT</button>
+      <p class="help">Du kan ændre dit svar indtil tiden løber ud.</p>
+    </div>
+
+    <!-- SUBMITTED CONFIRMATION -->
+    <div class="guest-card" id="submittedCard" style="display:none;">
+      <h2>Modtaget! ✅</h2>
+      <div class="locked-state">
+        <div style="color: var(--text-dim);">Dit gæt</div>
+        <div class="big" id="myGuess">—</div>
+        <p style="color: var(--text-dim);">Hold øje med storskærmen 📺</p>
+        <button class="btn ghost" id="changeBtn">Ret mit gæt</button>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="guest-card" id="resultCard" style="display:none;">
+      <h2>Resultat 🎉</h2>
+      <div class="kv">
+        <span class="k">Korrekt</span><span class="v" id="rCorrect" style="color: var(--good)">—</span>
+        <span class="k">Dit gæt</span><span class="v" id="rMine">—</span>
+        <span class="k">Emils gæt</span><span class="v" id="rEmil" style="color: var(--emil)">—</span>
+        <span class="k">Gæste-snit</span><span class="v" id="rGuests" style="color: var(--guests)">—</span>
+      </div>
+      <div id="winnerLine" style="text-align:center; margin-top:1.2rem; font-size: 1.4rem; font-weight: 900;">—</div>
+    </div>
+
+    <div class="guest-card" id="gameoverCard" style="display:none;">
+      <h2>Showet er slut! 🏁</h2>
+      <p>Tak for dit spil. Tjek storskærmen for slutresultatet.</p>
+    </div>
+
+    <div id="notice" class="notice" style="display:none;"></div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/play.js"></script>
+</body>
+</html>
