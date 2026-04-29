@@ -87,7 +87,7 @@
     editingQuestion = blankQuestion();
     fillQuestionForm(editingQuestion);
   };
-  $('importMdBtn').onclick = () => emitWithPin('host:import-questions-md');
+  if ($('importMdBtn')) $('importMdBtn').onclick = () => emitWithPin('host:import-questions-md');
 
   socket.on('host:start:result', (r) => !r.ok && notice(r.error || 'Kunne ikke starte'));
   socket.on('host:save-config:result', (r) => notice(r.ok ? 'Branding gemt' : (r.error || 'Kunne ikke gemme branding')));
@@ -95,7 +95,12 @@
   socket.on('host:show-qr:result', (r) => !r.ok && notice(r.error || 'Kunne ikke vise QR-kode'));
   socket.on('host:next:result', (r) => !r.ok && notice(r.error || 'Kunne ikke gå videre'));
   socket.on('host:restart-current:result', (r) => notice(r.ok ? 'Spørgsmålet er startet forfra' : (r.error || 'Kunne ikke starte spørgsmålet forfra')));
-  socket.on('host:add-time:result', (r) => notice(r.ok ? `${r.extraSeconds} sekunder tilføjet` : (r.error || 'Kunne ikke give mere tid')));
+  socket.on('host:add-time:result', (r) => {
+    if (!r.ok) { notice(r.error || 'Kunne ikke give mere tid'); return; }
+    if (r.phase === 'reopened') notice(`Spørgsmålet genåbnet i ${r.extraSeconds} sek - point rullet tilbage`);
+    else if (r.phase === 'pre_question') notice(`Pre-countdown forlænget med ${r.extraSeconds} sek`);
+    else notice(`${r.extraSeconds} sekunder tilføjet`);
+  });
   socket.on('host:save-question:result', (r) => notice(r.ok ? 'Spørgsmål gemt' : (r.error || 'Kunne ikke gemme')));
   socket.on('host:delete-question:result', (r) => notice(r.ok ? 'Spørgsmål slettet' : (r.error || 'Kunne ikke slette')));
   socket.on('host:import-questions-md:result', (r) => notice(r.ok ? `Importerede ${r.count} spørgsmål` : (r.error || 'Import fejlede')));
@@ -109,7 +114,7 @@
     fillQuestionForm(found);
   };
 
-  $('imageUpload').addEventListener('change', async (e) => {
+  $('imageUpload')?.addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const result = await uploadImage(file);

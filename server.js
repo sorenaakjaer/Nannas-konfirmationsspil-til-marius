@@ -337,6 +337,10 @@ app.use(express.static(PUBLIC_DIR));
 app.use('/uploads', express.static(UPLOAD_DIR));
 app.use('/reference_code', express.static(path.join(ROOT_DIR, 'reference_code')));
 
+app.get('/health', (_req, res) => {
+  res.json({ ok: true, phase: state.phase, uptime: process.uptime() });
+});
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
@@ -786,13 +790,22 @@ io.on('connection', (socket) => {
 
   socket.on('host:restart-current', ({ pin } = {}) => {
     if (!requireHost(pin, socket)) return;
-    if (!state.activeQuestionId || state.questionPointer < 0) {
+    if (state.questionPointer < 0 || !state.questionOrder.length) {
       socket.emit('host:restart-current:result', { ok: false, error: 'Intet aktivt spørgsmål at starte forfra' });
       return;
     }
-    if (state.phase !== 'question_open' && state.round.pointAwards && Object.keys(state.round.pointAwards).length) {
+    if (state.round.pointAwards && Object.keys(state.round.pointAwards).length) {
       rollbackCurrentRoundScores();
     }
+    state.round = {
+      startedAt: 0,
+      answers: {},
+      mariusAnswer: null,
+      correctOptionIds: [],
+      top3: state.round.top3 || [],
+      huntPlayers: [],
+      pointAwards: {},
+    };
     const ok = queueQuestionRound();
     socket.emit('host:restart-current:result', { ok, error: ok ? null : 'Kunne ikke starte spørgsmålet forfra' });
     broadcast();
@@ -800,16 +813,39 @@ io.on('connection', (socket) => {
 
   socket.on('host:add-time', ({ pin, extraSeconds } = {}) => {
     if (!requireHost(pin, socket)) return;
-    if (state.phase !== 'question_open' || !state.phaseEndsAt) {
-      socket.emit('host:add-time:result', { ok: false, error: 'Du kan kun give mere tid mens spørgsmålet er åbent' });
+    const extra = Math.max(1, Math.min(60, Number(extraSeconds) || 10));
+    if (state.phase === 'question_open' && state.phaseEndsAt) {
+      const remaining = Math.max(0, state.phaseEndsAt - Date.now());
+      state.phaseEndsAt = Date.now() + remaining + extra * 1000;
+      scheduleQuestionTimeout(remaining + extra * 1000);
+      socket.emit('host:add-time:result', { ok: true, extraSeconds: extra, phase: 'question_open' });
+      broadcast();
       return;
     }
-    const extra = Math.max(1, Math.min(60, Number(extraSeconds) || 10));
-    const remaining = Math.max(0, state.phaseEndsAt - Date.now());
-    state.phaseEndsAt = Date.now() + remaining + extra * 1000;
-    scheduleQuestionTimeout(remaining + extra * 1000);
-    socket.emit('host:add-time:result', { ok: true, extraSeconds: extra });
-    broadcast();
+    if (state.phase === 'pre_question' && state.phaseEndsAt) {
+      const remaining = Math.max(0, state.phaseEndsAt - Date.now());
+      state.phaseEndsAt = Date.now() + remaining + extra * 1000;
+      clearAutoQuestionStartTimer();
+      autoQuestionStartTimer = setTimeout(() => {
+        if (beginQuestionRound()) broadcast();
+      }, remaining + extra * 1000);
+      socket.emit('host:add-time:result', { ok: true, extraSeconds: extra, phase: 'pre_question' });
+      broadcast();
+      return;
+    }
+    if (state.phase === 'question_locked' || state.phase === 'answer_reveal' || state.phase === 'scoreboard') {
+      if (state.round.pointAwards && Object.keys(state.round.pointAwards).length) {
+        rollbackCurrentRoundScores();
+      }
+      clearPhaseTimers();
+      state.phase = 'question_open';
+      state.phaseEndsAt = Date.now() + extra * 1000;
+      scheduleQuestionTimeout(extra * 1000);
+      socket.emit('host:add-time:result', { ok: true, extraSeconds: extra, phase: 'reopened' });
+      broadcast();
+      return;
+    }
+    socket.emit('host:add-time:result', { ok: false, error: 'Ingen aktiv runde at give mere tid til' });
   });
 
   socket.on('host:finish', ({ pin } = {}) => {
