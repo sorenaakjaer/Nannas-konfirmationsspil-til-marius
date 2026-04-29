@@ -293,7 +293,7 @@
     const celebrant = s.config?.celebrantName || 'Marius';
     const hostName = s.config?.hostName || 'Nanna';
     const topPoints = realTop4.length ? Number(realTop4[0].points || 0) : 0;
-    const mariusPoints = Math.max(10000, topPoints + 1000);
+    const mariusPoints = Math.max(1000000, topPoints + 100000);
     const second = realTop4[0];
     const third = realTop4[1];
     const fourth = realTop4[2];

@@ -6,8 +6,8 @@
       "id": "q1",
       "prompt": "Er Marius bedre end Nanna til at lave mad?",
       "type": "single",
-      "timeLimitSeconds": 15,
-      "questionImageUrl": "",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "/uploads/mokbjwcp_pkehpe.jpg",
       "revealImageUrl": "/uploads/mocqeqam_hjeile.jpg",
       "revealText": "Han laver i hvert fald god stemning i køkkenet :-)",
       "enabled": true,
@@ -34,10 +34,10 @@
       "id": "q2",
       "prompt": "Har Marius engang kørt ind i en lygtepæl på cykel?",
       "type": "single",
-      "timeLimitSeconds": 18,
-      "questionImageUrl": "",
-      "revealImageUrl": "",
-      "revealText": "",
+      "timeLimitSeconds": 20,
+      "questionImageUrl": "/uploads/mokbldr1_nn5wjc.png",
+      "revealImageUrl": "/uploads/mokblkbg_m9ccnc.png",
+      "revealText": "Det var til FAKE spørgsmål...",
       "enabled": true,
       "options": [
         {
@@ -61,11 +61,11 @@
     {
       "id": "q3",
       "prompt": "Hvilken dato og årstal er Marius født?",
-      "type": "multi",
+      "type": "single",
       "timeLimitSeconds": 20,
       "questionImageUrl": "",
       "revealImageUrl": "",
-      "revealText": "Her var der flere rigtige svar.",
+      "revealText": "",
       "enabled": true,
       "options": [
         {
@@ -108,7 +108,7 @@
       "type": "single",
       "timeLimitSeconds": 15,
       "questionImageUrl": "",
-      "revealImageUrl": "",
+      "revealImageUrl": "/uploads/mokbuaa6_7vow9j.webp",
       "revealText": "",
       "enabled": true,
       "options": [
@@ -118,7 +118,7 @@
           "isCorrect": false,
           "color": "#ff4fa1",
           "shape": "triangle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokbtcy7_h3a4mx.jpg"
         },
         {
           "id": "q4o2",
@@ -126,7 +126,7 @@
           "isCorrect": false,
           "color": "#4666ff",
           "shape": "diamond",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokbtlee_z40h2f.jpg"
         },
         {
           "id": "q4o3",
@@ -134,7 +134,7 @@
           "isCorrect": true,
           "color": "#ffad33",
           "shape": "circle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokbtqsx_9fh6z5.webp"
         },
         {
           "id": "q4o4",
@@ -142,18 +142,18 @@
           "isCorrect": false,
           "color": "#13a06f",
           "shape": "square",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokbtvzw_lb2ga3.jfif"
         }
       ]
     },
     {
       "id": "qmoa0wp6j",
       "prompt": "Hvad kan Marius bedst lide?",
-      "type": "single",
+      "type": "multi",
       "timeLimitSeconds": 20,
       "questionImageUrl": "",
-      "revealImageUrl": "",
-      "revealText": "",
+      "revealImageUrl": "/uploads/mokcmkv6_vgt1e6.png",
+      "revealText": "Marius spiser alt, bare ikke svampe :-)",
       "enabled": true,
       "options": [
         {
@@ -162,23 +162,23 @@
           "isCorrect": true,
           "color": "#ff4fa1",
           "shape": "triangle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokcgnn8_gcipx7.jpg"
         },
         {
           "id": "qmoa0wp6j_o2",
           "text": "Laks",
-          "isCorrect": false,
+          "isCorrect": true,
           "color": "#4666ff",
           "shape": "diamond",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokcgsox_irmchf.jpg"
         },
         {
           "id": "qmoa0wp6j_o3",
           "text": "Pizza",
-          "isCorrect": false,
+          "isCorrect": true,
           "color": "#ffad33",
           "shape": "circle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokch0kd_ncvn7d.png"
         },
         {
           "id": "qmoa0wp6j_o4",
@@ -186,7 +186,7 @@
           "isCorrect": false,
           "color": "#13a06f",
           "shape": "square",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokch502_iag6lm.png"
         }
       ]
     },
@@ -196,7 +196,7 @@
       "type": "single",
       "timeLimitSeconds": 20,
       "questionImageUrl": "",
-      "revealImageUrl": "",
+      "revealImageUrl": "/uploads/mokd6hwl_jorqtu.jpg",
       "revealText": "",
       "enabled": true,
       "options": [
@@ -206,7 +206,7 @@
           "isCorrect": true,
           "color": "#ff4fa1",
           "shape": "triangle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd6bhw_z93f6u.jpg"
         },
         {
           "id": "qmoa0z2vx_o2",
@@ -214,7 +214,7 @@
           "isCorrect": false,
           "color": "#4666ff",
           "shape": "diamond",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd31hg_ygs374.jpg"
         },
         {
           "id": "qmoa0z2vx_o3",
@@ -222,7 +222,7 @@
           "isCorrect": false,
           "color": "#ffad33",
           "shape": "circle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd2ujr_58vdu9.jpg"
         },
         {
           "id": "qmoa0z2vx_o4",
@@ -230,7 +230,7 @@
           "isCorrect": false,
           "color": "#13a06f",
           "shape": "square",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd2o2f_9eg614.jpg"
         }
       ]
     },
@@ -284,8 +284,8 @@
       "type": "single",
       "timeLimitSeconds": 20,
       "questionImageUrl": "",
-      "revealImageUrl": "",
-      "revealText": "",
+      "revealImageUrl": "/uploads/mokdan4t_o35wl9.jpg",
+      "revealText": "Helt klar YOUTUBE!!!!!",
       "enabled": true,
       "options": [
         {
@@ -294,7 +294,7 @@
           "isCorrect": false,
           "color": "#ff4fa1",
           "shape": "triangle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd9czl_73uo1e.png"
         },
         {
           "id": "qmoa14k9g_o2",
@@ -302,7 +302,7 @@
           "isCorrect": true,
           "color": "#4666ff",
           "shape": "diamond",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd9lft_7lwbo5.jpg"
         },
         {
           "id": "qmoa14k9g_o3",
@@ -310,7 +310,7 @@
           "isCorrect": false,
           "color": "#ffad33",
           "shape": "circle",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokd9uj6_dha0te.svg"
         },
         {
           "id": "qmoa14k9g_o4",
@@ -318,7 +318,7 @@
           "isCorrect": false,
           "color": "#13a06f",
           "shape": "square",
-          "imageUrl": ""
+          "imageUrl": "/uploads/mokda31h_v5zhku.jpg"
         }
       ]
     },
@@ -329,7 +329,7 @@
       "timeLimitSeconds": 20,
       "questionImageUrl": "",
       "revealImageUrl": "/uploads/moct8578_4pi8hy.png",
-      "revealText": "",
+      "revealText": "Lækkert morgenhår lavet af hans sovemaske :-)",
       "enabled": true,
       "options": [
         {
