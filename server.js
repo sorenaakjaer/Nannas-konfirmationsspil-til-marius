@@ -10,6 +10,8 @@ require('dotenv').config();
 const PORT = Number(process.env.PORT || 3333);
 const HOST_PIN = process.env.HOST_PIN || '1234';
 const MARIUS_PIN = process.env.MARIUS_PIN || '2012';
+/** Synthetic session id for konfirmant — merged into leaderboard / live podie, ikke en rigtig socket-spiller */
+const CELEBRANT_SESSION_ID = '__celebrant__';
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || null;
 
 const ROOT_DIR = __dirname;
@@ -188,6 +190,10 @@ const state = {
   players: {},
   knownGuests: {},
   finalTop4: [],
+  celebrantPoints: 0,
+  celebrantCorrectCount: 0,
+  celebrantAnsweredCount: 0,
+  celebrantStreak: 0,
 };
 
 const savedState = safeReadJson(STATE_FILE, null);
@@ -199,6 +205,10 @@ if (savedState) {
   if (Number.isFinite(savedState.selectedQuestionCount)) {
     state.selectedQuestionCount = Math.max(1, Math.min(questionDoc.questions.length || 1, Number(savedState.selectedQuestionCount)));
   }
+  if (savedState.celebrantPoints != null) state.celebrantPoints = Number(savedState.celebrantPoints) || 0;
+  if (savedState.celebrantCorrectCount != null) state.celebrantCorrectCount = Number(savedState.celebrantCorrectCount) || 0;
+  if (savedState.celebrantAnsweredCount != null) state.celebrantAnsweredCount = Number(savedState.celebrantAnsweredCount) || 0;
+  if (savedState.celebrantStreak != null) state.celebrantStreak = Number(savedState.celebrantStreak) || 0;
 }
 
 function persistState() {
@@ -206,6 +216,10 @@ function persistState() {
     players: state.players,
     knownGuests: state.knownGuests,
     selectedQuestionCount: state.selectedQuestionCount,
+    celebrantPoints: state.celebrantPoints,
+    celebrantCorrectCount: state.celebrantCorrectCount,
+    celebrantAnsweredCount: state.celebrantAnsweredCount,
+    celebrantStreak: state.celebrantStreak,
   };
   fs.writeFileSync(STATE_FILE, JSON.stringify(persisted, null, 2));
 }
@@ -228,7 +242,8 @@ function makeSessionId(prefix = 'g') {
 }
 
 function computeLeaderboard() {
-  return Object.entries(state.players)
+  const celebrantName = String(configDoc.celebrantName || 'Marius').trim() || 'Marius';
+  const rows = Object.entries(state.players)
     .map(([sessionId, p]) => ({
       sessionId,
       name: p.name,
@@ -238,14 +253,36 @@ function computeLeaderboard() {
       answeredCount: p.answeredCount || 0,
       streak: p.streak || 0,
       pointsDelta: state.round.pointAwards?.[sessionId]?.points || 0,
-    }))
-    .sort((a, b) => b.points - a.points || b.correctCount - a.correctCount || a.name.localeCompare(b.name));
+    }));
+  const includeCelebrant =
+    Object.keys(state.players).length > 0
+    || (state.celebrantAnsweredCount || 0) > 0
+    || (state.celebrantPoints || 0) > 0;
+  if (includeCelebrant) {
+    rows.push({
+      sessionId: CELEBRANT_SESSION_ID,
+      name: celebrantName,
+      avatar: '👑',
+      points: state.celebrantPoints || 0,
+      correctCount: state.celebrantCorrectCount || 0,
+      answeredCount: state.celebrantAnsweredCount || 0,
+      streak: state.celebrantStreak || 0,
+      pointsDelta: state.round.pointAwards?.[CELEBRANT_SESSION_ID]?.points || 0,
+    });
+  }
+  return rows.sort((a, b) => b.points - a.points || b.correctCount - a.correctCount || a.name.localeCompare(b.name));
+}
+
+/** Top 4 kun blandt gæster — bruges til finale-podie (konfirmanten vises separat med 👑) */
+function computeGuestTop4() {
+  return computeLeaderboard().filter((p) => p.sessionId !== CELEBRANT_SESSION_ID).slice(0, 4);
 }
 
 function computeHuntPlayers(leaderboard) {
-  if (!leaderboard.length) return [];
-  const leaderPoints = leaderboard[0].points;
-  return leaderboard.filter((p) => leaderPoints - p.points <= 800).slice(0, 6);
+  const guests = leaderboard.filter((p) => p.sessionId !== CELEBRANT_SESSION_ID);
+  if (!guests.length) return [];
+  const leaderPoints = guests[0].points;
+  return guests.filter((p) => leaderPoints - p.points <= 800).slice(0, 6);
 }
 
 function concealQuestion(q, reveal = false) {
@@ -275,9 +312,8 @@ function publicView() {
   const reveal = state.phase === 'answer_reveal' || state.phase === 'scoreboard' || state.phase === 'finale';
   const leaderboard = computeLeaderboard();
   const answerEntries = Object.entries(state.round.answers || {});
-  const awardedEntries = Object.values(state.round.pointAwards || {});
-  const correctGuests = awardedEntries.filter((award) => award.isCorrect).length;
-  const incorrectGuests = Math.max(0, answerEntries.length - correctGuests);
+  const correctGuests = reveal ? answerEntries.filter(([, a]) => a.isCorrect).length : 0;
+  const incorrectGuests = reveal ? answerEntries.filter(([, a]) => !a.isCorrect).length : 0;
   return {
     config: {
       ...configDoc,
@@ -513,12 +549,44 @@ function lockQuestionRound() {
     };
     player.streak = isCorrect ? (player.streak || 0) + 1 : 0;
   }
+  const ma = state.round.mariusAnswer;
+  if (ma && q) {
+    const prevPoints = state.celebrantPoints || 0;
+    const prevAnswered = state.celebrantAnsweredCount || 0;
+    const prevCorrect = state.celebrantCorrectCount || 0;
+    const previousStreak = state.celebrantStreak || 0;
+    const isCorrect = isAnswerCorrect(ma.optionIds, correctIds);
+    const elapsed = Math.max(0, ma.submittedAt - (state.round.startedAt || 0));
+    const speedRatio = roundDuration > 0 ? Math.max(0, Math.min(1, 1 - elapsed / roundDuration)) : 1;
+    const points = isCorrect ? 1000 + Math.round(speedRatio * 500) : 0;
+    ma.isCorrect = isCorrect;
+    ma.points = points;
+    state.celebrantAnsweredCount = prevAnswered + 1;
+    if (isCorrect) state.celebrantCorrectCount = prevCorrect + 1;
+    state.celebrantPoints = prevPoints + points;
+    state.round.pointAwards[CELEBRANT_SESSION_ID] = {
+      points,
+      isCorrect,
+      prevPoints,
+      prevAnsweredCount: prevAnswered,
+      prevCorrectCount: prevCorrect,
+      prevStreak: previousStreak,
+    };
+    state.celebrantStreak = isCorrect ? previousStreak + 1 : 0;
+  }
   persistState();
   return true;
 }
 
 function rollbackCurrentRoundScores() {
   for (const [sessionId, award] of Object.entries(state.round.pointAwards || {})) {
+    if (sessionId === CELEBRANT_SESSION_ID) {
+      state.celebrantPoints = award.prevPoints ?? Math.max(0, (state.celebrantPoints || 0) - (award.points || 0));
+      state.celebrantAnsweredCount = award.prevAnsweredCount ?? Math.max(0, (state.celebrantAnsweredCount || 0) - 1);
+      state.celebrantCorrectCount = award.prevCorrectCount ?? Math.max(0, (state.celebrantCorrectCount || 0) - (award.isCorrect ? 1 : 0));
+      state.celebrantStreak = award.prevStreak ?? 0;
+      continue;
+    }
     const player = state.players[sessionId];
     if (!player) continue;
     player.points = award.prevPoints ?? Math.max(0, (player.points || 0) - (award.points || 0));
@@ -566,7 +634,7 @@ function openNextQuestion() {
     clearPhaseTimers();
     state.phase = 'finale';
     state.phaseEndsAt = null;
-    state.finalTop4 = computeLeaderboard().slice(0, 4);
+    state.finalTop4 = computeGuestTop4();
     return { ok: true, finale: true };
   }
   state.questionPointer += 1;
@@ -584,6 +652,10 @@ function startGame() {
   state.questionPointer = -1;
   state.activeQuestionId = null;
   state.finalTop4 = [];
+  state.celebrantPoints = 0;
+  state.celebrantCorrectCount = 0;
+  state.celebrantAnsweredCount = 0;
+  state.celebrantStreak = 0;
   for (const player of Object.values(state.players)) {
     player.points = 0;
     player.correctCount = 0;
@@ -611,6 +683,10 @@ function resetGame() {
     pointAwards: {},
   };
   state.finalTop4 = [];
+  state.celebrantPoints = 0;
+  state.celebrantCorrectCount = 0;
+  state.celebrantAnsweredCount = 0;
+  state.celebrantStreak = 0;
   for (const player of Object.values(state.players)) {
     player.points = 0;
     player.correctCount = 0;
@@ -852,7 +928,7 @@ io.on('connection', (socket) => {
     if (!requireHost(pin, socket)) return;
     state.phase = 'finale';
     state.phaseEndsAt = null;
-    state.finalTop4 = computeLeaderboard().slice(0, 4);
+    state.finalTop4 = computeGuestTop4();
     socket.emit('host:finish:result', { ok: true });
     broadcast();
   });
