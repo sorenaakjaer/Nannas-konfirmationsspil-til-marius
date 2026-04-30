@@ -1,0 +1,16 @@
+{
+  "name": "alle-mod-emil",
+  "version": "1.0.0",
+  "description": "Live quiz game for Emil's confirmation - guests vs Emil, inspired by 'Alle mod 1'",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "qrcode": "^1.5.4",
+    "socket.io-client": "^4.8.1",
+    "socket.io": "^4.7.5"
+  }
+}

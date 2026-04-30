@@ -1,0 +1,80 @@
+{
+  "totalCandy": 100,
+  "rewardLadder": [
+    4,
+    6,
+    10,
+    15,
+    25,
+    40
+  ],
+  "defaultLockSeconds": 45,
+  "rounds": [
+    {
+      "id": 1,
+      "title": "Runde 1",
+      "reward": 4,
+      "question": "Hvor mange leverpostejmadder kan Emil og mor smøre på 60 sekunder?",
+      "unit": "madder",
+      "min": 1,
+      "max": 60,
+      "lockSeconds": 45,
+      "hint": "Begge må smøre samtidig. Brødet er skåret på forhånd. En mad tæller kun hvis den er færdigsmurt og klar til servering."
+    },
+    {
+      "id": 2,
+      "title": "Runde 2",
+      "reward": 6,
+      "question": "Hvor mange Jumbo-bøger har Emil på sit værelse?",
+      "unit": "bøger",
+      "min": 1,
+      "max": 300,
+      "lockSeconds": 45,
+      "hint": "Det er kun de Jumbo-bøger, der fysisk er på værelset lige nu, der tæller – ikke dem der er lånt ud eller gemt væk andre steder."
+    },
+    {
+      "id": 3,
+      "title": "Runde 3",
+      "reward": 10,
+      "question": "Hvor mange drinks kan Emil færdiggøre på 60 sekunder?",
+      "unit": "drinks",
+      "min": 1,
+      "max": 50,
+      "lockSeconds": 45,
+      "hint": "En drink tæller kun, hvis den er fyldt præcist til stregen og pyntet med 3 forskellige garniturer."
+    },
+    {
+      "id": 4,
+      "title": "Runde 4",
+      "reward": 15,
+      "question": "Hvor mange familiemedlemmer kan Emil nævne korrekt (fornavn + relation) på 60 sekunder?",
+      "unit": "personer",
+      "min": 1,
+      "max": 80,
+      "lockSeconds": 45,
+      "hint": "Hver person skal nævnes med både navn og relation (fx “Onkel Lars”). Gentagelser eller fejl tæller ikke."
+    },
+    {
+      "id": 5,
+      "title": "Runde 5",
+      "reward": 25,
+      "question": "Hvor mange af Danmarks domkirker kan Emil nævne på 60 sekunder?",
+      "unit": "kirker",
+      "min": 1,
+      "max": 10,
+      "lockSeconds": 45,
+      "hint": "Kun rigtige danske domkirker tæller. Hver må kun nævnes én gang."
+    },
+    {
+      "id": 6,
+      "title": "FINALEN",
+      "reward": 40,
+      "question": "Hvor højt et fritstående Lego-tårn kan Emil bygge på 90 sekunder?",
+      "unit": "cm",
+      "min": 1,
+      "max": 200,
+      "lockSeconds": 45,
+      "hint": "Tårnet skal kunne stå selv i mindst 3 sekunder. Hvis det vælter, tæller kun den sidste målte højde."
+    }
+  ]
+}  

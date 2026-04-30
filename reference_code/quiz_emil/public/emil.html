@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Alle mod Emil — Emils side</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="container">
+    <div class="brand">
+      <span class="b1">ALLE MOD</span>
+      <span class="b-strike-wrap">
+        <span class="b-strike">1</span>
+        <svg class="b-cross" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="10" y1="15" x2="90" y2="85" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+          <line x1="10" y1="85" x2="90" y2="15" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="b-emil">EMIL</span>
+    </div>
+    <p class="subtitle">Kun for Emil 🤫 · Konfirmation 25. april</p>
+
+    <div class="card" id="loginCard">
+      <h2>Indtast PIN</h2>
+      <div class="field">
+        <label for="emilPin">Din hemmelige PIN</label>
+        <input id="emilPin" type="password" inputmode="numeric" placeholder="••••" />
+      </div>
+      <button class="btn" id="loginBtn">LOG IND</button>
+    </div>
+
+    <div id="panel" style="display:none; flex-direction: column; gap: 1.5rem;">
+      <div class="card">
+        <div class="phase-pill" id="phasePill">venter</div>
+        <h2 id="qTitle" style="margin-top:1rem;">Venter på spørgsmål...</h2>
+        <p id="qText" style="font-size:1.1rem; color: var(--text-dim);"></p>
+        <div id="qRange" class="range-badge" style="display:none;"></div>
+        <p id="qHint" style="font-size:.95rem; color: var(--text-dim); font-style: italic; margin-top: .6rem;"></p>
+      </div>
+
+      <div class="card" id="answerCard" style="display:none;">
+        <div class="countdown" id="countdownEmil"><span class="cd-label">Tid tilbage</span><span class="cd-value">--</span></div>
+        <h2>Dit svar (kun du kan se det)</h2>
+        <p class="help" style="margin-top:0;">Du kan ændre tallet indtil tiden løber ud — så bliver det automatisk låst.</p>
+        <div class="field" style="margin-top: 0.8rem;">
+          <input id="answerInput" class="big-number" type="number" step="1" inputmode="numeric" placeholder="0" />
+        </div>
+        <button class="btn" id="lockBtn">LÅS MIT SVAR NU 🔒</button>
+      </div>
+
+      <div class="card" id="lockedCard" style="display:none;">
+        <h2>Dit svar er låst 🔒</h2>
+        <div class="locked-state">
+          <div style="color: var(--text-dim);">Du gættede</div>
+          <div class="big" id="myAnswer">—</div>
+          <p style="color: var(--text-dim);">Læn dig tilbage og se hvad gæsterne gætter.</p>
+        </div>
+      </div>
+
+      <div class="card" id="resultCard" style="display:none;">
+        <h2>Resultatet</h2>
+        <div class="kv">
+          <span class="k">Korrekt svar</span><span class="v" id="rCorrect" style="color: var(--good)">—</span>
+          <span class="k">Dit svar</span><span class="v" id="rEmil" style="color: var(--emil)">—</span>
+          <span class="k">Gæsternes gennemsnit</span><span class="v" id="rGuests" style="color: var(--guests)">—</span>
+          <span class="k">Vinder</span><span class="v" id="rWinner">—</span>
+        </div>
+      </div>
+
+      <div id="notice" class="notice" style="display:none;"></div>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/emil.js"></script>
+</body>
+</html>

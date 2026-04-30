@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Alle mod Emil — Værtens kontrolpanel</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="container">
+    <div class="brand">
+      <span class="b1">ALLE MOD</span>
+      <span class="b-strike-wrap">
+        <span class="b-strike">1</span>
+        <svg class="b-cross" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="10" y1="15" x2="90" y2="85" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+          <line x1="10" y1="85" x2="90" y2="15" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="b-emil">EMIL</span>
+    </div>
+    <p class="subtitle">Værtens kontrolpanel · Konfirmation 25. april</p>
+
+    <div class="card" id="loginCard">
+      <h2>Log ind som vært</h2>
+      <div class="field">
+        <label for="hostPin">PIN</label>
+        <input id="hostPin" type="password" inputmode="numeric" placeholder="Indtast vært-PIN" />
+      </div>
+      <button class="btn" id="loginBtn">LOG IND</button>
+      <p class="help">Standard-PIN: <code>1234</code>.</p>
+    </div>
+
+    <div id="panel" style="display:none; flex-direction: column; gap: 1.5rem;">
+      <div class="card">
+        <h2>Status</h2>
+        <div class="kv">
+          <span class="k">Fase</span><span class="v"><span class="phase-pill" id="phasePill">—</span></span>
+          <span class="k">Runde</span><span class="v" id="roundLabel">—</span>
+          <span class="k">Spørgsmål</span><span class="v" id="qLabel" style="text-align:right; max-width:60%;">—</span>
+          <span class="k">Belønning</span><span class="v" id="rewardLabel">—</span>
+          <span class="k">Min – Max (forventet)</span><span class="v" id="minMaxLabel">—</span>
+          <span class="k">Emil svaret?</span><span class="v" id="emilLockLabel">—</span>
+          <span class="k">Antal gæster</span><span class="v" id="guestCountLabel">0</span>
+          <span class="k">Score Emil / Gæster</span><span class="v"><span style="color:var(--emil)" id="emilScore">0</span> / <span style="color:var(--guests)" id="guestScore">0</span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Rediger runde</h2>
+        <div class="field">
+          <label for="editRoundSelect">Runde</label>
+          <select id="editRoundSelect"></select>
+        </div>
+        <div class="field">
+          <label for="editTitle">Titel</label>
+          <input id="editTitle" type="text" />
+        </div>
+        <div class="field">
+          <label for="editQuestion">Spørgsmål</label>
+          <input id="editQuestion" type="text" />
+        </div>
+        <div class="field">
+          <label for="editUnit">Enhed</label>
+          <input id="editUnit" type="text" />
+        </div>
+        <div class="btn-row">
+          <div class="field" style="margin:0;">
+            <label for="editMin">Min</label>
+            <input id="editMin" type="number" step="1" inputmode="numeric" />
+          </div>
+          <div class="field" style="margin:0;">
+            <label for="editMax">Max</label>
+            <input id="editMax" type="number" step="1" inputmode="numeric" />
+          </div>
+          <div class="field" style="margin:0;">
+            <label for="editReward">Kinder Maxi</label>
+            <input id="editReward" type="number" step="1" inputmode="numeric" />
+          </div>
+          <div class="field" style="margin:0;">
+            <label for="editLockSeconds">Sekunder</label>
+            <input id="editLockSeconds" type="number" step="1" inputmode="numeric" />
+          </div>
+        </div>
+        <div class="field" style="margin-top:1rem;">
+          <label for="editHint">Hint</label>
+          <input id="editHint" type="text" />
+        </div>
+        <button class="btn secondary" id="btnSaveQuestion">Gem runde-indstillinger</button>
+      </div>
+
+      <div class="card">
+        <h2>Styring</h2>
+
+        <button class="btn btn-start-game" id="btnStartGame" style="display:none;">▶️ START SPILLET</button>
+
+        <p class="help">Flow: <strong>Vis spørgsmål</strong> → Emil + gæster gætter samtidig → <strong>Luk afstemning</strong> → indtast facit → <strong>Vis svar</strong> → <strong>Vis resultat</strong> → <strong>Næste runde</strong>.</p>
+
+        <div class="btn-row">
+          <button class="btn" id="btnShow">Vis spørgsmål</button>
+          <button class="btn secondary" id="btnClose">Luk afstemning</button>
+        </div>
+
+        <div class="field" style="margin-top: 1.2rem;">
+          <label for="correctInput">Facit (det rigtige svar)</label>
+          <input id="correctInput" class="big-number" type="number" step="1" inputmode="numeric" placeholder="0" />
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btnSetCorrect">Vis svar (Emil + facit)</button>
+          <button class="btn" id="btnReveal">Vis resultat 🎉</button>
+        </div>
+
+        <div class="btn-row" style="margin-top:1rem;">
+          <button class="btn secondary" id="btnNext">Næste runde →</button>
+        </div>
+
+        <details style="margin-top:1rem;">
+          <summary class="help">Overstyr vinder (kun under reveal)</summary>
+          <div style="display:flex; gap:.6rem; margin-top:.8rem; flex-wrap: wrap;">
+            <button class="btn ghost" id="btnOverrideEmil" style="flex:1;">→ Emil</button>
+            <button class="btn ghost" id="btnOverrideGuests" style="flex:1;">→ Gæster</button>
+            <button class="btn ghost" id="btnOverrideTie" style="flex:1;">→ Uafgjort</button>
+          </div>
+        </details>
+
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 1.2rem 0;" />
+        <button class="btn danger" id="btnReset">Nulstil hele spillet</button>
+      </div>
+
+      <div class="card">
+        <h2>Gæsternes gæt (live)</h2>
+        <ul class="list" id="guestList"><li><span class="name">Ingen endnu</span><span class="val">—</span></li></ul>
+      </div>
+
+      <div class="card">
+        <h2>Genveje</h2>
+        <div class="kv">
+          <span class="k">Storskærm</span><span class="v"><a href="/screen" target="_blank">/screen</a></span>
+          <span class="k">Emils side</span><span class="v"><a href="/emil" target="_blank">/emil</a></span>
+          <span class="k">Gæste-URL</span><span class="v"><a href="/play" target="_blank">/play</a></span>
+        </div>
+      </div>
+
+      <div id="notice" class="notice" style="display:none;"></div>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/host.js"></script>
+</body>
+</html>

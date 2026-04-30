@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Alle mod Emil — Loadtest</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="container">
+    <div class="brand">
+      <span class="b1">ALLE MOD</span>
+      <span class="b-strike-wrap">
+        <span class="b-strike">1</span>
+        <svg class="b-cross" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="10" y1="15" x2="90" y2="85" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+          <line x1="10" y1="85" x2="90" y2="15" stroke="#ff4d6d" stroke-width="12" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="b-emil">EMIL</span>
+    </div>
+    <p class="subtitle">Intern Render-loadtest</p>
+
+    <div class="card">
+      <h2>Start loadtest</h2>
+      <div class="field">
+        <label for="pin">Host PIN</label>
+        <input id="pin" type="password" inputmode="numeric" placeholder="Host PIN" />
+      </div>
+      <div class="btn-row">
+        <div class="field" style="margin:0;">
+          <label for="count">Antal fake gæster</label>
+          <input id="count" type="number" step="1" inputmode="numeric" value="100" min="1" max="200" />
+        </div>
+        <div class="field" style="margin:0;">
+          <label for="spreadMs">Spread ms</label>
+          <input id="spreadMs" type="number" step="1" inputmode="numeric" value="30" min="0" max="200" />
+        </div>
+      </div>
+      <button class="btn" id="startBtn">Start loadtest</button>
+      <p class="help">Safe mode til Render Free: simulerer samme quizarbejde (join + navne/avatarer + evt. svar) i batches uden at åbne 100 interne sockets i samme instance. Det er den stabile måde at teste kapacitet på Render.</p>
+      <div id="notice" class="notice" style="display:none; margin-top:1rem;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Status</h2>
+      <div class="kv" id="statusKv">
+        <span class="k">Kører</span><span class="v" id="stRunning">—</span>
+        <span class="k">Target</span><span class="v" id="stTarget">—</span>
+        <span class="k">Mode</span><span class="v" id="stMode">—</span>
+        <span class="k">Total</span><span class="v" id="stTotal">—</span>
+        <span class="k">Connected</span><span class="v" id="stConnected">—</span>
+        <span class="k">Identified</span><span class="v" id="stIdentified">—</span>
+        <span class="k">Submit ACKs</span><span class="v" id="stSubmitAcks">—</span>
+        <span class="k">Errors</span><span class="v" id="stErrors">—</span>
+        <span class="k">Latest phase</span><span class="v" id="stPhase">—</span>
+        <span class="k">Latest guestCount</span><span class="v" id="stGuestCount">—</span>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/loadtest.js"></script>
+</body>
+</html>
