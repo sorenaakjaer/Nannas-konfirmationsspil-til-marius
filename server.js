@@ -278,6 +278,16 @@ function computeGuestTop4() {
   return computeLeaderboard().filter((p) => p.sessionId !== CELEBRANT_SESSION_ID).slice(0, 4);
 }
 
+/** Stor-skærm / spiller-podiet: konfirmant kun med i listen når samlet rang er 1–3 */
+function leaderboardForSidebarPodium(maxEntries) {
+  const ranked = computeLeaderboard();
+  const ci = ranked.findIndex((p) => p.sessionId === CELEBRANT_SESSION_ID);
+  if (ci === -1 || ci >= 3) {
+    return ranked.filter((p) => p.sessionId !== CELEBRANT_SESSION_ID).slice(0, maxEntries);
+  }
+  return ranked.slice(0, maxEntries);
+}
+
 function computeHuntPlayers(leaderboard) {
   const guests = leaderboard.filter((p) => p.sessionId !== CELEBRANT_SESSION_ID);
   if (!guests.length) return [];
@@ -310,10 +320,13 @@ function publicView() {
   configDoc = normalizeConfig(safeReadJson(CONFIG_FILE, configDoc));
   const q = currentQuestion();
   const reveal = state.phase === 'answer_reveal' || state.phase === 'scoreboard' || state.phase === 'finale';
-  const leaderboard = computeLeaderboard();
   const answerEntries = Object.entries(state.round.answers || {});
-  const correctGuests = reveal ? answerEntries.filter(([, a]) => a.isCorrect).length : 0;
-  const incorrectGuests = reveal ? answerEntries.filter(([, a]) => !a.isCorrect).length : 0;
+  const guestCorrect = reveal ? answerEntries.filter(([, a]) => a.isCorrect).length : 0;
+  const guestIncorrect = reveal ? answerEntries.filter(([, a]) => !a.isCorrect).length : 0;
+  const maHit = reveal && state.round.mariusAnswer;
+  const mariusCorrect = Boolean(maHit && state.round.mariusAnswer.isCorrect);
+  const correctGuests = reveal ? guestCorrect + (maHit && mariusCorrect ? 1 : 0) : 0;
+  const incorrectGuests = reveal ? guestIncorrect + (maHit && !mariusCorrect ? 1 : 0) : 0;
   return {
     config: {
       ...configDoc,
@@ -351,7 +364,7 @@ function publicView() {
       top3: state.round.top3,
       huntPlayers: state.round.huntPlayers,
     },
-    leaderboardTop4: leaderboard.slice(0, 4),
+    leaderboardTop4: leaderboardForSidebarPodium(4),
     finalTop4: state.finalTop4,
   };
 }
@@ -604,7 +617,7 @@ function revealAnswer() {
   state.phase = 'answer_reveal';
   state.phaseEndsAt = null;
   const leaderboard = computeLeaderboard();
-  state.round.top3 = leaderboard.slice(0, 3);
+  state.round.top3 = leaderboardForSidebarPodium(3);
   state.round.huntPlayers = computeHuntPlayers(leaderboard);
   return true;
 }

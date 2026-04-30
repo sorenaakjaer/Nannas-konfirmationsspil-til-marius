@@ -347,8 +347,8 @@
   }
 
   function updateTopAndHunt(s) {
-    const liveTop3 = (s.leaderboardTop4 || []).slice(0, 3);
-    const top3 = (s.round.top3 && s.round.top3.length ? s.round.top3 : liveTop3) || [];
+    // leaderboardTop4: kun gæster medmindre konfirmanten er i samlet top 3
+    const top3 = (s.leaderboardTop4 || []).slice(0, 3);
     const previousMap = new Map(previousTop3.map((p, idx) => [p.sessionId, { player: p, index: idx }]));
     const hasAnyPlayers = top3.length > 0;
     const inGameplay = s.phase !== 'lobby' && s.phase !== 'finale';
@@ -542,7 +542,6 @@
     const q = s.question;
     if (!q) return;
     const correct = new Set(q.correctOptionIds || []);
-    const top3 = s.round.top3 || [];
     const optionMap = new Map((q.options || []).map((o) => [o.id, o]));
     const mariusAnswer = s.round.mariusAnswer;
     const mariusOptionIds = mariusAnswer?.optionIds || [];
